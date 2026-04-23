@@ -1,0 +1,107 @@
+---
+const campaign = import.meta.env.PUBLIC_DONORBOX_CAMPAIGN ?? 'help-families-in-need-this-holiday-season';
+---
+
+<div class="donorbox" data-campaign={campaign}>
+  <div class="donorbox__loading" data-loading-state aria-live="polite">
+    <span class="donorbox__spinner" aria-hidden="true"></span>
+    <p>Preparing your donation form…</p>
+  </div>
+
+  <donorbox-widget
+    campaign={campaign}
+    type="donation_form"
+    enable-auto-scroll="true"
+    style="display:block;width:100%;"
+  ></donorbox-widget>
+</div>
+
+<style>
+  .donorbox {
+    position: relative;
+    min-height: 36rem;
+    background: var(--color-cream);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    overflow: hidden;
+  }
+  .donorbox__loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    color: var(--color-ink-muted);
+    font-size: var(--fs-sm);
+  }
+  .donorbox__loading[hidden] { display: none; }
+  .donorbox__spinner {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 3px solid var(--color-wheat);
+    border-top-color: var(--color-amber);
+    animation: spin 0.9s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .donorbox__spinner { animation: none; border-top-color: var(--color-amber); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+
+<script>
+  // Per spec: load donorbox.org/widgets.js as a module on mount, show
+  // loading until ready (≥300ms), and clean up on unmount/page hide.
+  const SCRIPT_SRC = 'https://donorbox.org/widgets.js';
+  const MIN_VISIBLE_MS = 300;
+  const mountedAt = Date.now();
+
+  function hideLoadingWhenReady() {
+    const elapsed = Date.now() - mountedAt;
+    const wait = Math.max(0, MIN_VISIBLE_MS - elapsed);
+    setTimeout(() => {
+      const el = document.querySelector<HTMLElement>('[data-loading-state]');
+      if (el) el.hidden = true;
+    }, wait);
+  }
+
+  function loadScript() {
+    if (document.querySelector(`script[src="${SCRIPT_SRC}"]`)) {
+      hideLoadingWhenReady();
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = SCRIPT_SRC;
+    s.type = 'module';
+    s.async = true;
+    s.onload = hideLoadingWhenReady;
+    s.onerror = () => {
+      const el = document.querySelector<HTMLElement>('[data-loading-state]');
+      if (el) {
+        el.textContent = '';
+        const p = document.createElement('p');
+        p.style.color = 'var(--color-error)';
+        p.append(
+          'The donation form failed to load. Please refresh, or email ',
+        );
+        const a = document.createElement('a');
+        a.href = 'mailto:info@rosettasangels.org';
+        a.textContent = 'info@rosettasangels.org';
+        p.append(a);
+        p.append(' to donate by another method.');
+        el.append(p);
+      }
+    };
+    document.head.appendChild(s);
+  }
+
+  loadScript();
+
+  // Cleanup on bfcache page-hide.
+  window.addEventListener('pagehide', () => {
+    const s = document.querySelector(`script[src="${SCRIPT_SRC}"]`);
+    if (s && s.parentNode) s.parentNode.removeChild(s);
+  });
+</script>

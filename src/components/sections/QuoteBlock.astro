@@ -1,0 +1,53 @@
+---
+const {
+  quote,
+  attribution,
+  attributionRole,
+} = Astro.props;
+---
+
+<section class="section section--pine quote-block" aria-label="Quote">
+  <div class="container--narrow quote-block__inner">
+    <span class="quote-block__mark" aria-hidden="true">&ldquo;</span>
+    <blockquote class="quote-block__text italic-display">
+      {quote}
+    </blockquote>
+    <footer class="quote-block__attr">
+      <span class="quote-block__attr-name">— {attribution}</span>
+      {attributionRole && <span class="quote-block__attr-role"> · {attributionRole}</span>}
+    </footer>
+  </div>
+</section>
+
+<style>
+  .quote-block { position: relative; overflow: hidden; }
+  .quote-block__inner {
+    position: relative;
+    text-align: start;
+    padding-block: var(--space-4);
+  }
+  .quote-block__mark {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--color-amber);
+    font-size: clamp(5rem, 4rem + 6vw, 9rem);
+    line-height: 0.7;
+    margin-block-end: var(--space-4);
+  }
+  .quote-block__text {
+    font-size: clamp(1.5rem, 1.1rem + 1.5vw, 2.25rem);
+    line-height: 1.4;
+    color: var(--color-cream);
+    text-wrap: balance;
+  }
+  .quote-block__attr {
+    margin-block-start: var(--space-8);
+    font-family: var(--font-body);
+    font-size: var(--fs-sm);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--color-on-dark-soft);
+  }
+  .quote-block__attr-name { color: var(--color-amber); font-weight: 700; }
+</style>

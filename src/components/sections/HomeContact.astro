@@ -1,0 +1,55 @@
+---
+import ContactForm from '~/islands/ContactForm.tsx';
+---
+
+<section id="contactForm" class="section home-contact" aria-labelledby="contact-heading">
+  <div class="container home-contact__inner">
+    <header class="home-contact__header reveal">
+      <p class="eyebrow">Get in Touch</p>
+      <h2 id="contact-heading" class="display home-contact__heading">
+        Have a question? <span class="underline-mark">Write us</span>.
+      </h2>
+      <p class="lede">
+        Have questions about our holiday basket initiative or want to make a difference?
+      </p>
+      <p class="home-contact__direct">
+        Or email us directly at
+        <a href="mailto:info@rosettasangels.org">info@rosettasangels.org</a>.
+      </p>
+    </header>
+
+    <div class="home-contact__form reveal">
+      <ContactForm client:visible />
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-contact { background: var(--color-cream-200); }
+  .home-contact__inner {
+    display: grid;
+    gap: var(--space-12);
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  @media (min-width: 1024px) {
+    .home-contact__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+      gap: var(--space-16);
+    }
+  }
+  .home-contact__heading { color: var(--color-evergreen); margin-block: var(--space-3) var(--space-5); }
+  .home-contact__direct {
+    margin-block-start: var(--space-4);
+    font-size: var(--fs-sm);
+    color: var(--color-ink-soft);
+  }
+  .home-contact__form {
+    background: var(--color-cream);
+    padding: var(--space-8);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+  }
+  @media (min-width: 768px) { .home-contact__form { padding: var(--space-10); } }
+</style>

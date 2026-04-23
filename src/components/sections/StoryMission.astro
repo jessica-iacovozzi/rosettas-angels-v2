@@ -1,0 +1,122 @@
+---
+import { getImageUrl } from '~/lib/cloudinary';
+import { GALLERY_ASSETS_SORTED } from '~/lib/gallery-assets';
+
+// Pick two distinct gallery photos for the collage.
+const photos = GALLERY_ASSETS_SORTED.filter((a) => a.type === 'image').slice(0, 2);
+---
+
+<section class="section story-mission" aria-labelledby="story-heading">
+  <div class="container story-mission__grid">
+    <div class="story-mission__media reveal">
+      {photos[0] && (
+        <figure class="photo-card story-mission__photo story-mission__photo--a">
+          <img
+            src={getImageUrl(photos[0].id, 720)}
+            srcset={`${getImageUrl(photos[0].id, 480)} 480w, ${getImageUrl(photos[0].id, 720)} 720w, ${getImageUrl(photos[0].id, 960)} 960w`}
+            sizes="(min-width: 1024px) 24rem, (min-width: 640px) 40vw, 70vw"
+            width="720"
+            height="900"
+            loading="lazy"
+            decoding="async"
+            alt={photos[0].alt}
+          />
+        </figure>
+      )}
+      {photos[1] && (
+        <figure class="photo-card story-mission__photo story-mission__photo--b">
+          <img
+            src={getImageUrl(photos[1].id, 640)}
+            srcset={`${getImageUrl(photos[1].id, 360)} 360w, ${getImageUrl(photos[1].id, 640)} 640w`}
+            sizes="(min-width: 1024px) 18rem, 40vw"
+            width="640"
+            height="800"
+            loading="lazy"
+            decoding="async"
+            alt={photos[1].alt}
+          />
+        </figure>
+      )}
+    </div>
+
+    <div class="story-mission__copy">
+      <article class="story-mission__block reveal">
+        <p class="eyebrow">Our Story</p>
+        <h2 id="story-heading" class="display story-mission__heading">
+          Born from <span class="underline-mark">love</span>.
+        </h2>
+        <p class="lede">
+          Rosetta's Angels was born from a profound loss. After Rosetta Malgieri
+          Regillo passed away, her family decided to honour her memory the way
+          she had always lived — by giving. What started with a handful of
+          baskets for neighbours has grown into an annual brigade serving
+          hundreds of Montreal families each holiday season.
+        </p>
+      </article>
+
+      <article class="story-mission__block reveal">
+        <p class="eyebrow">Our Mission</p>
+        <h2 class="display story-mission__heading">
+          Holiday joy, <span class="underline-mark">delivered</span>.
+        </h2>
+        <p class="lede">
+          As a Montreal-based non-profit, we connect generous donors and
+          dedicated volunteers with families facing hardship — providing food,
+          gifts, and a personal moment of warmth at a time when it matters
+          most.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .story-mission { background: var(--color-cream); }
+  .story-mission__grid {
+    display: grid;
+    gap: var(--space-12);
+    grid-template-columns: 1fr;
+    align-items: center;
+  }
+  @media (min-width: 1024px) {
+    .story-mission__grid {
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: var(--space-16);
+    }
+  }
+
+  .story-mission__media {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    max-width: 32rem;
+    margin-inline: auto;
+    width: 100%;
+  }
+  .story-mission__photo {
+    position: absolute;
+    margin: 0;
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+  .story-mission__photo--a {
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    width: 70%;
+    transform: rotate(-2deg);
+  }
+  .story-mission__photo--b {
+    inset-block-end: 0;
+    inset-inline-end: 0;
+    width: 55%;
+    transform: rotate(3.5deg);
+    z-index: 2;
+  }
+
+  .story-mission__copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+  .story-mission__heading { color: var(--color-evergreen); }
+  .story-mission__block .eyebrow { margin-block-end: var(--space-3); }
+  .story-mission__block .lede { margin-block-start: var(--space-5); }
+</style>

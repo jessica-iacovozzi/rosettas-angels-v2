@@ -1,0 +1,118 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Lightbox from '~/islands/Lightbox.tsx';
+import { getImageUrl, getResponsiveSrcSet } from '~/lib/cloudinary';
+import { GALLERY_ASSETS_SORTED } from '~/lib/gallery-assets';
+
+const items = GALLERY_ASSETS_SORTED;
+---
+
+<BaseLayout
+  title="Gallery"
+  description="Browse photos and videos from years of Rosetta's Angels holiday basket events in Montreal."
+>
+  <section class="section gallery-hero" aria-labelledby="gallery-heading">
+    <div class="container">
+      <p class="eyebrow">Gallery</p>
+      <h1 id="gallery-heading" class="display-lg">
+        Sixteen years of <span class="underline-mark">smiles</span>.
+      </h1>
+      <p class="lede">
+        Behind every basket is a moment. Browse the photos and videos that
+        capture our volunteers, families, and the Montreal community at its most
+        generous.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight gallery-grid-wrap">
+    <div class="container">
+      <ul class="gallery-grid" role="list">
+        {items.map((item, idx) => (
+          <li class="gallery-grid__item">
+            <button
+              type="button"
+              class="js-lightbox-trigger gallery-grid__btn"
+              data-lightbox-index={idx}
+              aria-label={`Open ${item.type === 'video' ? 'video' : 'photo'}: ${item.alt}`}
+            >
+              <img
+                src={getImageUrl(item.type === 'video' ? item.id.replace('_video', '') : item.id, 600)}
+                srcset={getResponsiveSrcSet(item.type === 'video' ? item.id.replace('_video', '') : item.id, [320, 480, 600, 800])}
+                sizes="(min-width: 1024px) 22vw, (min-width: 640px) 32vw, 46vw"
+                alt={item.alt}
+                loading="lazy"
+                decoding="async"
+                width="600"
+                height="450"
+                onerror={`this.onerror=null;this.src='${item.thumbnailUrl ?? item.url}'`}
+              />
+              {item.type === 'video' && (
+                <span class="gallery-grid__play" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 3 L17 10 L5 17 Z" fill="currentColor"/></svg>
+                </span>
+              )}
+              {item.year && <span class="gallery-grid__year" aria-hidden="true">{item.year}</span>}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <Lightbox client:load assets={items} />
+</BaseLayout>
+
+<style>
+  .gallery-hero { background: var(--color-cream); padding-block-end: var(--space-6); }
+  .gallery-hero h1 { color: var(--color-evergreen); margin-block: var(--space-4) var(--space-5); }
+
+  .gallery-grid {
+    list-style: none;
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 640px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: var(--space-4); } }
+  @media (min-width: 1024px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .gallery-grid__item { aspect-ratio: 1 / 1; }
+  .gallery-grid__btn {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-wheat);
+    cursor: pointer;
+    transition: transform var(--duration-base) var(--ease-out),
+                box-shadow var(--duration-base) var(--ease-out);
+  }
+  .gallery-grid__btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .gallery-grid__btn img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery-grid__play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 56px; height: 56px;
+    border-radius: var(--radius-pill);
+    background: var(--color-amber);
+    color: var(--color-evergreen-900);
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-md);
+  }
+  .gallery-grid__year {
+    position: absolute;
+    inset-block-end: var(--space-2);
+    inset-inline-start: var(--space-2);
+    background: var(--color-evergreen);
+    color: var(--color-amber);
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: var(--tracking-tight);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-xs);
+  }
+</style>

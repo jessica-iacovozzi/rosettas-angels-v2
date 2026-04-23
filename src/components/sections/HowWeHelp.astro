@@ -1,0 +1,127 @@
+---
+const ACTIVITIES = [
+  {
+    title: 'Gift Wrapping',
+    description: 'Help create magical moments by wrapping presents for children and families.',
+    icon: 'gift',
+  },
+  {
+    title: 'Basket Assembly',
+    description: 'Assist with picking up donations and supplies across the city.',
+    icon: 'basket',
+  },
+  {
+    title: 'Errand Running',
+    description: 'Help with various errands and supply runs.',
+    icon: 'errand',
+  },
+  {
+    title: 'Basket Delivery',
+    description: 'Help distribute completed baskets directly to families in the Montreal area.',
+    icon: 'truck',
+  },
+];
+---
+
+<section class="section how-we-help section--wheat" aria-labelledby="how-heading">
+  <div class="container how-we-help__inner">
+    <header class="how-we-help__header reveal">
+      <p class="eyebrow">How We Support Families</p>
+      <h2 id="how-heading" class="display">
+        Four ways your <span class="underline-mark">hands</span> make&nbsp;magic.
+      </h2>
+    </header>
+
+    <ul class="how-we-help__grid" role="list">
+      {ACTIVITIES.map((a) => (
+        <li class="how-we-help__card reveal">
+          <div class="how-we-help__icon" aria-hidden="true">
+            {a.icon === 'gift' && (
+              <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="12" width="24" height="14" rx="1"/>
+                <path d="M2 12h28M16 12v14M16 12c-2-4-7-4-7-1s5 1 7 1zM16 12c2-4 7-4 7-1s-5 1-7 1z"/>
+              </svg>
+            )}
+            {a.icon === 'basket' && (
+              <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12h26l-2 14H5z"/>
+                <path d="M10 12l4-7M22 12l-4-7"/>
+                <path d="M12 17v5M16 17v5M20 17v5"/>
+              </svg>
+            )}
+            {a.icon === 'errand' && (
+              <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 7h14l3 9H6z"/>
+                <circle cx="11" cy="22" r="2.5"/>
+                <circle cx="22" cy="22" r="2.5"/>
+                <path d="M2 7h4M20 16h6"/>
+              </svg>
+            )}
+            {a.icon === 'truck' && (
+              <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="9" width="16" height="13" rx="1"/>
+                <path d="M19 13h6l4 4v5h-10z"/>
+                <circle cx="9" cy="24" r="2.5"/>
+                <circle cx="23" cy="24" r="2.5"/>
+              </svg>
+            )}
+          </div>
+          <h3 class="how-we-help__title">{a.title}</h3>
+          <p class="how-we-help__desc">{a.description}</p>
+        </li>
+      ))}
+    </ul>
+
+    <div class="how-we-help__cta reveal">
+      <a href="/volunteer" class="btn btn--primary btn--lg">Become a Volunteer</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .how-we-help__header { text-align: center; max-width: 38rem; margin: 0 auto var(--space-12); }
+  .how-we-help__header h2 { color: var(--color-evergreen); }
+  .how-we-help__grid {
+    list-style: none;
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .how-we-help__grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .how-we-help__grid { grid-template-columns: repeat(4, 1fr); } }
+
+  .how-we-help__card {
+    background: var(--color-cream);
+    padding: var(--space-8) var(--space-6);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    transition: transform var(--duration-base) var(--ease-out),
+                box-shadow var(--duration-base) var(--ease-out);
+  }
+  .how-we-help__card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+  .how-we-help__icon {
+    width: 56px; height: 56px;
+    border-radius: var(--radius-pill);
+    background: var(--color-amber-100);
+    color: var(--color-evergreen);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-block-end: var(--space-3);
+  }
+  .how-we-help__title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-tight);
+    font-size: var(--fs-xl);
+    color: var(--color-evergreen);
+  }
+  .how-we-help__desc { color: var(--color-ink-soft); font-size: var(--fs-sm); line-height: var(--lh-relaxed); }
+
+  .how-we-help__cta { text-align: center; margin-block-start: var(--space-12); }
+</style>

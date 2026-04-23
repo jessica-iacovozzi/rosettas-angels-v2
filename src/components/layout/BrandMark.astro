@@ -1,0 +1,27 @@
+---
+// Wordmark — display type, two-tone. Click area is the wrapping <a> in Header.
+---
+<span class="brandmark" aria-label="Rosetta's Angels — home">
+  <span class="brandmark__word">Rosetta's</span>
+  <span class="brandmark__word brandmark__word--accent">Angels</span>
+</span>
+
+<style>
+  .brandmark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: 0.95;
+    text-transform: uppercase;
+    display: inline-flex;
+    flex-direction: column;
+    letter-spacing: var(--tracking-tight);
+    font-size: clamp(1.25rem, 1.05rem + 0.4vw, 1.5rem);
+  }
+  .brandmark__word { display: block; }
+  .brandmark__word--accent {
+    color: var(--color-amber);
+    margin-inline-start: 0.4em;
+  }
+  /* When mark sits on the dark mobile-menu panel */
+  :global([data-theme='dark']) .brandmark { color: var(--color-cream); }
+</style>

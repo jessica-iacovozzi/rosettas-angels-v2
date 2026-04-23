@@ -1,0 +1,63 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import HomeHero from '~/components/sections/HomeHero.astro';
+import StoryMission from '~/components/sections/StoryMission.astro';
+import QuoteBlock from '~/components/sections/QuoteBlock.astro';
+import HowWeHelp from '~/components/sections/HowWeHelp.astro';
+import Stats from '~/components/sections/Stats.astro';
+import GetInvolved from '~/components/sections/GetInvolved.astro';
+import HomeContact from '~/components/sections/HomeContact.astro';
+---
+
+<BaseLayout
+  title="Home"
+  description="Rosetta's Angels is a Montreal-based non-profit organization bringing holiday joy to families in need through our annual basket brigade."
+>
+  <HomeHero />
+  <StoryMission />
+  <QuoteBlock
+    quote='If you are in a position to help others, don&rsquo;t let the moment pass.'
+    attribution="Rosetta Malgieri Regillo"
+    attributionRole="Founder, in spirit"
+  />
+  <HowWeHelp />
+  <Stats />
+  <GetInvolved />
+  <HomeContact />
+</BaseLayout>
+
+<script>
+  // Hash-targeted smooth scroll with responsive offset
+  // Spec: 20px mobile, 100px tablet, 150px desktop, 300ms delay
+  function offset() {
+    const w = window.innerWidth;
+    if (w >= 1024) return 150;
+    if (w >= 768) return 100;
+    return 20;
+  }
+  function scrollToHash(hash: string) {
+    const target = document.querySelector(hash);
+    if (!target) return;
+    const y = target.getBoundingClientRect().top + window.scrollY - offset();
+    window.scrollTo({
+      top: y,
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    });
+  }
+  // On hard load with hash
+  if (window.location.hash) {
+    setTimeout(() => scrollToHash(window.location.hash), 300);
+  }
+  // On in-page anchor clicks
+  document.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
+    if (!a) return;
+    const hash = a.getAttribute('href');
+    if (!hash || hash === '#') return;
+    if (document.querySelector(hash)) {
+      e.preventDefault();
+      history.replaceState(null, '', hash);
+      setTimeout(() => scrollToHash(hash), 0);
+    }
+  });
+</script>

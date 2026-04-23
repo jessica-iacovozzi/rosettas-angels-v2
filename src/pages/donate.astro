@@ -1,0 +1,116 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import DonorboxEmbed from '~/components/donation/DonorboxEmbed.astro';
+---
+
+<BaseLayout
+  title="Donate"
+  description="Support Rosetta's Angels — your gift helps Montreal families receive holiday baskets full of food, gifts, and warmth."
+  preconnectDonorbox={true}
+>
+  <section class="section donate-banner section--evergreen" aria-labelledby="donate-banner">
+    <div class="container donate-banner__inner">
+      <p class="eyebrow donate-banner__eyebrow">Support Our Mission</p>
+      <h1 id="donate-banner" class="display-lg donate-banner__heading">
+        Make a <span class="underline-mark">donation</span>.
+      </h1>
+      <p class="donate-banner__lede">
+        Your generosity helps us bring holiday joy to Montreal families in need.
+        Every gift becomes a basket — and every basket becomes a memory.
+      </p>
+    </div>
+  </section>
+
+  <section class="section donate-grid">
+    <div class="container donate-grid__inner">
+      <div class="donate-grid__copy">
+        <h2 class="display donate-grid__heading">Two ways to give</h2>
+
+        <article class="donate-method">
+          <h3 class="donate-method__title display">By Cheque</h3>
+          <p class="donate-method__body">
+            If you prefer to send a cheque, please contact us at
+            <a href="mailto:info@rosettasangels.org">info@rosettasangels.org</a>
+            for mailing information.
+          </p>
+        </article>
+
+        <article class="donate-method">
+          <h3 class="donate-method__title display">Online Donation</h3>
+          <p class="donate-method__body">
+            Use the Donorbox form on the right to give online by credit card,
+            Apple Pay, Google Pay, or PayPal.
+          </p>
+          <p class="donate-method__note">
+            While we are a registered non-profit organization, please note that
+            we are not yet able to provide tax receipts as we await our official
+            charity status.
+          </p>
+        </article>
+
+        <p class="donate-grid__thanks">
+          Thank you for believing in our mission and for being part of our
+          community. Don't hesitate to contact us if you have any questions or
+          concerns.
+        </p>
+      </div>
+
+      <aside class="donate-grid__widget" aria-labelledby="online-donate-heading">
+        <h2 id="online-donate-heading" class="sr-only">Online donation form</h2>
+        <DonorboxEmbed />
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .donate-banner__inner { text-align: center; max-width: 48rem; margin-inline: auto; }
+  .donate-banner__eyebrow { color: var(--color-amber); }
+  .donate-banner__heading { color: var(--color-cream); margin-block: var(--space-4) var(--space-5); }
+  .donate-banner__lede {
+    color: var(--color-on-dark-soft);
+    font-size: var(--fs-md);
+    line-height: var(--lh-relaxed);
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+
+  .donate-grid__inner {
+    display: grid;
+    gap: var(--space-12);
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  @media (min-width: 1024px) {
+    .donate-grid__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      gap: var(--space-16);
+    }
+  }
+
+  .donate-grid__heading { color: var(--color-evergreen); margin-block-end: var(--space-8); }
+  .donate-method {
+    background: var(--color-cream-200);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+    margin-block-end: var(--space-6);
+    border-left: 4px solid var(--color-amber);
+  }
+  .donate-method__title { color: var(--color-evergreen); font-size: var(--fs-xl); margin-block-end: var(--space-3); }
+  .donate-method__body { color: var(--color-ink-soft); line-height: var(--lh-relaxed); }
+  .donate-method__note {
+    margin-block-start: var(--space-4);
+    font-size: var(--fs-sm);
+    color: var(--color-ink-muted);
+    border-block-start: 1px dashed var(--color-border);
+    padding-block-start: var(--space-3);
+  }
+  .donate-grid__thanks {
+    color: var(--color-ink-soft);
+    font-family: var(--font-italic);
+    font-style: italic;
+    line-height: var(--lh-relaxed);
+    font-size: var(--fs-md);
+    margin-block-start: var(--space-8);
+  }
+</style>

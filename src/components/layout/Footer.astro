@@ -1,0 +1,135 @@
+---
+import BrandMark from './BrandMark.astro';
+const year = new Date().getFullYear();
+---
+
+<!-- Wave divider into the dark footer -->
+<div class="divider-wave" aria-hidden="true">
+  <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+    <path
+      d="M0,40 C240,80 480,0 720,32 C960,64 1200,16 1440,48 L1440,80 L0,80 Z"
+      fill="#1f3d2e"
+    />
+  </svg>
+</div>
+
+<footer class="site-footer" role="contentinfo" data-theme="dark">
+  <div class="container site-footer__inner">
+    <div class="site-footer__brand-block">
+      <a href="/" class="site-footer__brand" aria-label="Rosetta's Angels — home">
+        <BrandMark />
+      </a>
+      <p class="site-footer__tagline">
+        A Montreal-based non-profit bringing holiday joy to families in need —
+        carrying on Rosetta's legacy, one basket at a time.
+      </p>
+    </div>
+
+    <nav class="site-footer__nav" aria-label="Footer">
+      <h2 class="small-caps site-footer__heading">Explore</h2>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/gallery">Gallery</a></li>
+        <li><a href="/team">Our Team</a></li>
+        <li><a href="/volunteer">Volunteer</a></li>
+        <li><a href="/donate">Donate</a></li>
+      </ul>
+    </nav>
+
+    <div class="site-footer__contact">
+      <h2 class="small-caps site-footer__heading">Contact</h2>
+      <ul>
+        <li>
+          <a href="mailto:info@rosettasangels.org">info@rosettasangels.org</a>
+        </li>
+        <li>Montreal, Quebec, Canada</li>
+        <li>
+          <a href="/#contactForm">Send us a message</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="site-footer__transparency">
+      <h2 class="small-caps site-footer__heading">Transparency</h2>
+      <p>
+        Rosetta's Angels is a registered non-profit organization. We are not yet
+        able to issue tax receipts as we await official charity status. 100% of
+        donations go toward holiday baskets and family support.
+      </p>
+    </div>
+  </div>
+
+  <div class="container site-footer__base">
+    <small>
+      © {year} Rosetta's Angels. All rights reserved.
+      <span class="site-footer__credit">Made with love by the Angels community.</span>
+    </small>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-evergreen);
+    color: var(--color-on-dark);
+    padding-block: var(--section-pad-y-tight);
+  }
+  .site-footer a {
+    color: var(--color-on-dark);
+    text-decoration-color: var(--color-amber);
+  }
+  .site-footer a:hover { color: var(--color-amber); }
+
+  .site-footer__inner {
+    display: grid;
+    gap: var(--space-10);
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  @media (min-width: 768px) {
+    .site-footer__inner {
+      grid-template-columns: 1.4fr 0.8fr 1fr 1.2fr;
+    }
+  }
+
+  .site-footer__brand { display: inline-block; text-decoration: none; color: var(--color-cream); }
+  .site-footer__tagline {
+    margin-block-start: var(--space-4);
+    color: var(--color-on-dark-soft);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-relaxed);
+    max-width: 28ch;
+  }
+
+  .site-footer__heading {
+    color: var(--color-amber);
+    margin-block-end: var(--space-4);
+    display: block;
+  }
+
+  .site-footer__nav ul,
+  .site-footer__contact ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--fs-sm);
+  }
+
+  .site-footer__transparency p {
+    color: var(--color-on-dark-soft);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-relaxed);
+  }
+
+  .site-footer__base {
+    margin-block-start: var(--space-10);
+    padding-block-start: var(--space-6);
+    border-block-start: 1px solid rgba(250, 244, 232, 0.15);
+    color: var(--color-on-dark-soft);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    font-size: var(--fs-xs);
+  }
+  .site-footer__credit { color: var(--color-on-dark-soft); }
+</style>

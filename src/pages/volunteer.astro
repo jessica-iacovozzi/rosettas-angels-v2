@@ -1,0 +1,162 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import VolunteerForm from '~/islands/VolunteerForm.tsx';
+import { EVENT_DATES, isSingleDayEvent, formatEventDate } from '~/lib/event-config';
+
+const ACTIVITIES = [
+  { title: 'Gift Wrapping', description: 'Help create magical moments by wrapping presents for children and families.' },
+  { title: 'Basket Assembly', description: 'Assist with picking up donations and supplies across the city.' },
+  { title: 'Errand Running', description: 'Help with various errands and supply runs.' },
+  { title: 'Basket Delivery', description: 'Help distribute completed baskets directly to families in the Montreal area.' },
+];
+---
+
+<BaseLayout
+  title="Volunteer"
+  description="Sign up to volunteer with Rosetta's Angels and help bring holiday joy to Montreal families."
+>
+  <section class="section volunteer-hero" aria-labelledby="volunteer-heading">
+    <div class="container">
+      <p class="eyebrow">Volunteer</p>
+      <h1 id="volunteer-heading" class="display-lg">
+        Join our volunteer <span class="underline-mark">team</span>.
+      </h1>
+      <p class="lede">
+        At Rosetta's Angels, our volunteers are the heart of our holiday basket
+        brigade. Together, we can continue Rosetta's legacy and bring joy to
+        Montreal families this December.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--tight event-details" aria-labelledby="event-heading">
+    <div class="container">
+      <h2 id="event-heading" class="display event-details__heading">Event Details</h2>
+      <dl class="event-details__list">
+        <div>
+          <dt class="small-caps">When</dt>
+          <dd>
+            {EVENT_DATES.map((d) => (
+              <span class="event-details__date">{formatEventDate(d)}</span>
+            ))}
+          </dd>
+        </div>
+        <div>
+          <dt class="small-caps">Where</dt>
+          <dd>Montreal — exact location shared with confirmed volunteers.</dd>
+        </div>
+        <div>
+          <dt class="small-caps">Contact</dt>
+          <dd><a href="mailto:info@rosettasangels.org">info@rosettasangels.org</a></dd>
+        </div>
+      </dl>
+
+      <h3 class="event-details__sub display">Activities</h3>
+      <ul class="event-details__activities" role="list">
+        {ACTIVITIES.map((a) => (
+          <li>
+            <strong>{a.title}.</strong> {a.description}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--wheat volunteer-form-wrap" aria-labelledby="form-heading">
+    <div class="container volunteer-form-wrap__inner">
+      <header class="volunteer-form-wrap__header">
+        <h2 id="form-heading" class="display volunteer-form-wrap__heading">
+          Fill out the <span class="underline-mark">form</span>.
+        </h2>
+        <p class="lede">
+          Together, we can continue Rosetta's legacy. We'll be in touch within a
+          few days of receiving your application.
+        </p>
+        {isSingleDayEvent && (
+          <p class="volunteer-form-wrap__note">
+            This year's event is a single day, so the availability selector is
+            hidden. Your time slot will be confirmed by email.
+          </p>
+        )}
+      </header>
+      <div class="volunteer-form-wrap__card">
+        <VolunteerForm client:visible />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .volunteer-hero { background: var(--color-cream); padding-block-end: var(--space-6); }
+  .volunteer-hero h1 { color: var(--color-evergreen); margin-block: var(--space-4) var(--space-5); }
+
+  .event-details__heading { color: var(--color-evergreen); margin-block-end: var(--space-8); }
+  .event-details__list {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: 1fr;
+    margin-block-end: var(--space-12);
+  }
+  @media (min-width: 768px) { .event-details__list { grid-template-columns: repeat(3, 1fr); } }
+  .event-details__list dt { color: var(--color-amber-600); margin-block-end: var(--space-2); display: block; }
+  .event-details__list dd { color: var(--color-ink); font-size: var(--fs-md); }
+  .event-details__date {
+    display: inline-block;
+    background: var(--color-amber-100);
+    color: var(--color-evergreen);
+    font-family: var(--font-display);
+    font-weight: 800;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .event-details__sub { color: var(--color-evergreen); margin-block-end: var(--space-6); font-size: var(--fs-xl); }
+  .event-details__activities {
+    list-style: none;
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 640px) { .event-details__activities { grid-template-columns: repeat(2, 1fr); } }
+  .event-details__activities li {
+    background: var(--color-cream);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    line-height: var(--lh-relaxed);
+    color: var(--color-ink-soft);
+  }
+  .event-details__activities strong { color: var(--color-evergreen); font-family: var(--font-display); font-weight: 800; text-transform: uppercase; letter-spacing: var(--tracking-tight); margin-inline-end: var(--space-2); }
+
+  .volunteer-form-wrap__inner {
+    display: grid;
+    gap: var(--space-12);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 1024px) {
+    .volunteer-form-wrap__inner {
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.3fr);
+      gap: var(--space-16);
+      align-items: start;
+    }
+  }
+  .volunteer-form-wrap__heading { color: var(--color-evergreen); margin-block-end: var(--space-5); }
+  .volunteer-form-wrap__note {
+    margin-block-start: var(--space-6);
+    padding: var(--space-4);
+    background: var(--color-cream);
+    border-left: 4px solid var(--color-amber);
+    border-radius: var(--radius-sm);
+    color: var(--color-ink-soft);
+    font-size: var(--fs-sm);
+  }
+  .volunteer-form-wrap__card {
+    background: var(--color-cream);
+    padding: var(--space-8);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+  }
+  @media (min-width: 768px) { .volunteer-form-wrap__card { padding: var(--space-10); } }
+</style>

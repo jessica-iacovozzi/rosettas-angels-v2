@@ -1,0 +1,102 @@
+---
+const STATS = [
+  { value: 16, suffix: '', label: 'Years of Service' },
+  { value: 300, suffix: '+', label: 'Families Supported' },
+  { value: 50, suffix: '+', label: 'Annual Volunteers' },
+];
+---
+
+<section class="section stats section--evergreen" aria-labelledby="stats-heading">
+  <div class="container stats__inner">
+    <h2 id="stats-heading" class="sr-only">Our impact by the numbers</h2>
+    <ul class="stats__grid" role="list">
+      {STATS.map((s) => (
+        <li class="stats__item">
+          <span
+            class="stats__value display-xl"
+            data-target={s.value}
+            data-suffix={s.suffix}
+          >
+            0{s.suffix}
+          </span>
+          <span class="stats__label small-caps">{s.label}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="stats__since reveal">
+      <span class="underline-mark">Since 2009</span> in Montreal.
+    </p>
+  </div>
+</section>
+
+<style>
+  .stats { color: var(--color-cream); }
+  .stats__grid {
+    list-style: none;
+    display: grid;
+    gap: var(--space-10);
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  @media (min-width: 768px) { .stats__grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .stats__item { display: flex; flex-direction: column; gap: var(--space-3); align-items: center; }
+  .stats__value {
+    color: var(--color-amber);
+    line-height: 0.95;
+    font-variant-numeric: tabular-nums;
+  }
+  .stats__label { color: var(--color-on-dark-soft); }
+
+  .stats__since {
+    margin-block-start: var(--space-12);
+    text-align: center;
+    font-family: var(--font-italic);
+    font-style: italic;
+    font-size: var(--fs-lg);
+    color: var(--color-on-dark-soft);
+  }
+  .stats__since .underline-mark { color: var(--color-cream); }
+</style>
+
+<script>
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const items = document.querySelectorAll<HTMLElement>('.stats__value');
+
+  function format(n: number, suffix: string) {
+    return `${Math.round(n).toLocaleString('en-US')}${suffix}`;
+  }
+
+  function animateOne(el: HTMLElement) {
+    const target = Number(el.dataset.target ?? 0);
+    const suffix = el.dataset.suffix ?? '';
+    if (REDUCED) {
+      el.textContent = format(target, suffix);
+      return;
+    }
+    const duration = 2000;
+    const start = performance.now();
+    function tick(now: number) {
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+      el.textContent = format(target * eased, suffix);
+      if (t < 1) requestAnimationFrame(tick);
+      else el.textContent = format(target, suffix);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    items.forEach(animateOne);
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          animateOne(e.target as HTMLElement);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    items.forEach((el) => io.observe(el));
+  }
+</script>

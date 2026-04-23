@@ -1,0 +1,89 @@
+---
+import { getImageUrl, getResponsiveSrcSet } from '~/lib/cloudinary';
+import { GALLERY_ASSETS_SORTED } from '~/lib/gallery-assets';
+
+const cards = [
+  {
+    eyebrow: 'Make a Donation',
+    title: 'Fund the next basket.',
+    body: 'Every dollar goes directly into food, gifts, and essentials for families this December.',
+    cta: { label: 'Donate Now', href: '/donate' },
+    image: GALLERY_ASSETS_SORTED.find((a) => a.id.includes('2024')) ?? GALLERY_ASSETS_SORTED[1],
+  },
+  {
+    eyebrow: 'Become a Volunteer',
+    title: 'Join the brigade.',
+    body: 'Sort, wrap, pack, deliver. A few hours of your time becomes a holiday memory for a family.',
+    cta: { label: 'Volunteer Now', href: '/volunteer' },
+    image: GALLERY_ASSETS_SORTED.find((a) => a.id.includes('2023')) ?? GALLERY_ASSETS_SORTED[2],
+  },
+];
+---
+
+<section class="section get-involved" aria-labelledby="involve-heading">
+  <div class="container">
+    <header class="get-involved__header reveal">
+      <p class="eyebrow">Get Involved</p>
+      <h2 id="involve-heading" class="display">
+        Join us in making a <span class="underline-mark">difference</span>.
+      </h2>
+    </header>
+
+    <div class="get-involved__grid">
+      {cards.map((c) => (
+        <article class="get-involved__card reveal">
+          <div class="get-involved__media">
+            {c.image && (
+              <img
+                src={getImageUrl(c.image.id, 800)}
+                srcset={getResponsiveSrcSet(c.image.id, [480, 800, 1200])}
+                sizes="(min-width: 1024px) 36rem, (min-width: 640px) 50vw, 92vw"
+                alt={c.image.alt}
+                loading="lazy"
+                decoding="async"
+                width="800"
+                height="600"
+              />
+            )}
+          </div>
+          <div class="get-involved__body">
+            <p class="eyebrow">{c.eyebrow}</p>
+            <h3 class="get-involved__title display-lg">{c.title}</h3>
+            <p class="get-involved__copy">{c.body}</p>
+            <a href={c.cta.href} class="btn btn--primary btn--lg">{c.cta.label}</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .get-involved__header { text-align: center; max-width: 40rem; margin: 0 auto var(--space-12); }
+  .get-involved__header h2 { color: var(--color-evergreen); }
+
+  .get-involved__grid {
+    display: grid;
+    gap: var(--space-8);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 768px) { .get-involved__grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .get-involved__card {
+    background: var(--color-cream);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--duration-base) var(--ease-out),
+                box-shadow var(--duration-base) var(--ease-out);
+  }
+  .get-involved__card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .get-involved__media { aspect-ratio: 4 / 3; overflow: hidden; }
+  .get-involved__media img { width: 100%; height: 100%; object-fit: cover; }
+  .get-involved__body { padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-4); align-items: flex-start; }
+  .get-involved__title { color: var(--color-evergreen); }
+  .get-involved__copy { color: var(--color-ink-soft); }
+</style>

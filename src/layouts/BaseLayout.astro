@@ -1,0 +1,101 @@
+---
+import '~/styles/global.css';
+import SkipLink from '~/components/layout/SkipLink.astro';
+import Header from '~/components/layout/Header.astro';
+import Footer from '~/components/layout/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Optional OG image (Cloudinary URL recommended) */
+  ogImage?: string;
+  /** Set true on `/donate` to inject Donorbox preconnect early */
+  preconnectDonorbox?: boolean;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  preconnectDonorbox = false,
+} = Astro.props;
+
+const fullTitle = title.includes("Rosetta's Angels") ? title : `${title} — Rosetta's Angels`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://www.rosettasangels.org').toString();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#1f3d2e" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/favicon.ico" />
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="Rosetta's Angels" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Fonts: preconnect, then a single CSS request for the three families -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Fraunces:ital,wght@0,400;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap"
+    />
+
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    {preconnectDonorbox && (
+      <>
+        <link rel="preconnect" href="https://donorbox.org" crossorigin />
+        <link rel="dns-prefetch" href="https://donorbox.org" />
+      </>
+    )}
+
+    <slot name="head" />
+  </head>
+  <body>
+    <SkipLink />
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- Reveal-on-scroll: respects prefers-reduced-motion via CSS -->
+    <script>
+      const els = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window) ||
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        els.forEach((el) => el.classList.add('is-visible'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add('is-visible');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -80px 0px', threshold: 0.05 }
+        );
+        els.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* Ensure main never sits below sticky header on hash navigation */
+  main { scroll-margin-top: var(--header-height); }
+</style>
