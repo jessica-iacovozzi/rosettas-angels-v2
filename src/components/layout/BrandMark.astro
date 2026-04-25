@@ -1,13 +1,39 @@
 ---
 // Wordmark — display type, two-tone. Click area is the wrapping <a> in Header.
+// Logo image is currently hidden; when re-enabling it, import Image from 'astro:assets'
+// and getImageUrl from '~/lib/cloudinary', then uncomment the <Image> block below.
 ---
 <span class="brandmark" aria-label="Rosetta's Angels — home">
-  <span class="brandmark__word">Rosetta's</span>
-  <span class="brandmark__word brandmark__word--accent">Angels</span>
+<!--   <Image
+    class="brandmark__logo"
+    src={logoUrl}
+    alt=""
+    width={40}
+    height={40}
+    aria-hidden="true"
+    loading="eager"
+  /> -->
+  <span class="brandmark__text">
+    <span class="brandmark__word">Rosetta's</span>
+    <span class="brandmark__word brandmark__word--accent">Angels</span>
+  </span>
 </span>
 
 <style>
   .brandmark {
+    display: flex;
+    width: fit-content;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .brandmark__logo {
+    width: 2.5rem;
+    height: 2.5rem;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+  .brandmark__text {
     font-family: var(--font-display);
     font-weight: 800;
     line-height: 0.95;

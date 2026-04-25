@@ -255,7 +255,7 @@ export default function ContactForm() {
         .contact-form__actions {
           display: flex;
           flex-direction: column;
-          gap: var(--space-3);
+          gap: var(--space-6);
           align-items: flex-start;
           margin-block-start: var(--space-4);
         }

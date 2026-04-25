@@ -1,5 +1,5 @@
 // Gallery & home media manifest. Public IDs match the Cloudinary `rosettasangels`
-// account. Year is parsed from the public_id where present so we can group/sort
+// account. Year is parsed from the id where present so we can group/sort
 // in the gallery view without hand-maintaining a parallel list.
 
 import type { GalleryAsset, ResolvedGalleryAsset } from '~/types';

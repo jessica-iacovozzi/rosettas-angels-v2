@@ -1,5 +1,6 @@
 ---
-import { getImageUrl, getResponsiveSrcSet } from '~/lib/cloudinary';
+import { Image } from 'astro:assets';
+import { getImageUrl } from '~/lib/cloudinary';
 import { GALLERY_ASSETS_SORTED } from '~/lib/gallery-assets';
 
 const cards = [
@@ -8,14 +9,14 @@ const cards = [
     title: 'Fund the next basket.',
     body: 'Every dollar goes directly into food, gifts, and essentials for families this December.',
     cta: { label: 'Donate Now', href: '/donate' },
-    image: GALLERY_ASSETS_SORTED.find((a) => a.id.includes('2024')) ?? GALLERY_ASSETS_SORTED[1],
+    image: GALLERY_ASSETS_SORTED.find((a) => a.id.includes('2018')) ?? GALLERY_ASSETS_SORTED[1],
   },
   {
     eyebrow: 'Become a Volunteer',
     title: 'Join the brigade.',
     body: 'Sort, wrap, pack, deliver. A few hours of your time becomes a holiday memory for a family.',
     cta: { label: 'Volunteer Now', href: '/volunteer' },
-    image: GALLERY_ASSETS_SORTED.find((a) => a.id.includes('2023')) ?? GALLERY_ASSETS_SORTED[2],
+    image: GALLERY_ASSETS_SORTED.find((a) => a.id.includes('2017')) ?? GALLERY_ASSETS_SORTED[2],
   },
 ];
 ---
@@ -34,15 +35,14 @@ const cards = [
         <article class="get-involved__card reveal">
           <div class="get-involved__media">
             {c.image && (
-              <img
-                src={getImageUrl(c.image.id, 800)}
-                srcset={getResponsiveSrcSet(c.image.id, [480, 800, 1200])}
+              <Image
+                src={getImageUrl(c.image.id, 1200)}
+                widths={[480, 800, 1200]}
                 sizes="(min-width: 1024px) 36rem, (min-width: 640px) 50vw, 92vw"
                 alt={c.image.alt}
                 loading="lazy"
-                decoding="async"
-                width="800"
-                height="600"
+                width={800}
+                height={600}
               />
             )}
           </div>

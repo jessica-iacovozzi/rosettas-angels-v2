@@ -4,24 +4,45 @@ import VolunteerForm from '~/islands/VolunteerForm.tsx';
 import { EVENT_DATES, isSingleDayEvent, formatEventDate } from '~/lib/event-config';
 
 const ACTIVITIES = [
-  { title: 'Gift Wrapping', description: 'Help create magical moments by wrapping presents for children and families.' },
-  { title: 'Basket Assembly', description: 'Assist with picking up donations and supplies across the city.' },
-  { title: 'Errand Running', description: 'Help with various errands and supply runs.' },
-  { title: 'Basket Delivery', description: 'Help distribute completed baskets directly to families in the Montreal area.' },
+  {
+    title: 'Gift Wrapping',
+    description: 'Help create magical moments by wrapping presents for children and families.',
+    icon: 'gift',
+    accent: '#d77f1f',
+  },
+  {
+    title: 'Basket Assembly',
+    description: 'Carefully pack food, gifts, and essentials into holiday baskets ready for delivery.',
+    icon: 'basket',
+    accent: '#a8331f',
+  },
+  {
+    title: 'Errand Running',
+    description: 'Help with various errands and supply runs to keep the brigade moving.',
+    icon: 'errand',
+    accent: '#1f3d2e',
+  },
+  {
+    title: 'Basket Delivery',
+    description: 'Help distribute completed baskets directly to families in the Montreal area.',
+    icon: 'truck',
+    accent: '#b86614',
+  },
 ];
 ---
 
 <BaseLayout
   title="Volunteer"
   description="Sign up to volunteer with Rosetta's Angels and help bring holiday joy to Montreal families."
+  footerWaveBgColor="var(--color-wheat)"
 >
-  <section class="section volunteer-hero" aria-labelledby="volunteer-heading">
+  <section class="section volunteer-hero section--evergreen" aria-labelledby="volunteer-heading">
     <div class="container">
-      <p class="eyebrow">Volunteer</p>
-      <h1 id="volunteer-heading" class="display-lg">
+      <p class="eyebrow volunteer-hero__eyebrow">Volunteer</p>
+      <h1 id="volunteer-heading" class="display-lg volunteer-hero__heading">
         Join our volunteer <span class="underline-mark">team</span>.
       </h1>
-      <p class="lede">
+      <p class="lede volunteer-hero__lede">
         At Rosetta's Angels, our volunteers are the heart of our holiday basket
         brigade. Together, we can continue Rosetta's legacy and bring joy to
         Montreal families this December.
@@ -54,8 +75,40 @@ const ACTIVITIES = [
       <h3 class="event-details__sub display">Activities</h3>
       <ul class="event-details__activities" role="list">
         {ACTIVITIES.map((a) => (
-          <li>
-            <strong>{a.title}.</strong> {a.description}
+          <li class="activity-card" style={`--accent: ${a.accent};`}>
+            <div class="activity-card__icon" aria-hidden="true">
+              {a.icon === 'gift' && (
+                <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="4" y="12" width="24" height="14" rx="1"/>
+                  <path d="M2 12h28M16 12v14M16 12c-2-4-7-4-7-1s5 1 7 1zM16 12c2-4 7-4 7-1s-5 1-7 1z"/>
+                </svg>
+              )}
+              {a.icon === 'basket' && (
+                <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12h26l-2 14H5z"/>
+                  <path d="M10 12l4-7M22 12l-4-7"/>
+                  <path d="M12 17v5M16 17v5M20 17v5"/>
+                </svg>
+              )}
+              {a.icon === 'errand' && (
+                <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 7h14l3 9H6z"/>
+                  <circle cx="11" cy="22" r="2.5"/>
+                  <circle cx="22" cy="22" r="2.5"/>
+                  <path d="M2 7h4M20 16h6"/>
+                </svg>
+              )}
+              {a.icon === 'truck' && (
+                <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="9" width="16" height="13" rx="1"/>
+                  <path d="M19 13h6l4 4v5h-10z"/>
+                  <circle cx="9" cy="24" r="2.5"/>
+                  <circle cx="23" cy="24" r="2.5"/>
+                </svg>
+              )}
+            </div>
+            <strong class="activity-card__title">{a.title}</strong>
+            <p class="activity-card__desc">{a.description}</p>
           </li>
         ))}
       </ul>
@@ -87,13 +140,15 @@ const ACTIVITIES = [
 </BaseLayout>
 
 <style>
-  .volunteer-hero { background: var(--color-cream); padding-block-end: var(--space-6); }
-  .volunteer-hero h1 { color: var(--color-evergreen); margin-block: var(--space-4) var(--space-5); }
+  .volunteer-hero { padding-block-end: var(--space-12); }
+  .volunteer-hero__eyebrow { color: var(--color-amber); }
+  .volunteer-hero__heading { color: var(--color-cream); margin-block: var(--space-4) var(--space-5); }
+  .volunteer-hero__lede { color: var(--color-on-dark-soft); }
 
   .event-details__heading { color: var(--color-evergreen); margin-block-end: var(--space-8); }
   .event-details__list {
     display: grid;
-    gap: var(--space-6);
+    gap: var(--space-12);
     grid-template-columns: 1fr;
     margin-block-end: var(--space-12);
   }
@@ -115,19 +170,58 @@ const ACTIVITIES = [
   .event-details__activities {
     list-style: none;
     display: grid;
-    gap: var(--space-4);
+    gap: var(--space-5);
     grid-template-columns: 1fr;
   }
   @media (min-width: 640px) { .event-details__activities { grid-template-columns: repeat(2, 1fr); } }
-  .event-details__activities li {
+
+  .activity-card {
     background: var(--color-cream);
     border: 1px solid var(--color-border);
+    border-top: 4px solid var(--accent, var(--color-amber));
     border-radius: var(--radius-md);
-    padding: var(--space-5);
-    line-height: var(--lh-relaxed);
-    color: var(--color-ink-soft);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    transition: transform var(--duration-base) var(--ease-out),
+                box-shadow var(--duration-base) var(--ease-out);
   }
-  .event-details__activities strong { color: var(--color-evergreen); font-family: var(--font-display); font-weight: 800; text-transform: uppercase; letter-spacing: var(--tracking-tight); margin-inline-end: var(--space-2); }
+  .activity-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .activity-card__icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--accent, var(--color-amber)) 12%, transparent);
+    color: var(--accent, var(--color-amber));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-block-end: var(--space-1);
+    flex-shrink: 0;
+  }
+
+  .activity-card__title {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--fs-lg);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-evergreen);
+    line-height: var(--lh-snug);
+  }
+
+  .activity-card__desc {
+    color: var(--color-ink-soft);
+    font-size: var(--fs-sm);
+    line-height: var(--lh-relaxed);
+    margin: 0;
+  }
 
   .volunteer-form-wrap__inner {
     display: grid;

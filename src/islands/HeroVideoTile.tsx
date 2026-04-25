@@ -76,7 +76,7 @@ export default function HeroVideoTile({
         onClick={() => setOpen(true)}
         aria-label={label}
       >
-        <img src={posterUrl} alt="" loading="lazy" decoding="async" />
+        <img src={posterUrl} alt="" loading="eager" fetchpriority="high" decoding="async" />
         <span class="hero-tile__badge" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
             <path d="M5 3 L19 11 L5 19 Z" fill="currentColor" />

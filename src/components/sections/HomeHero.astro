@@ -7,10 +7,10 @@ const bannerVideoUrl = getVideoUrl(HOME_BANNER_VIDEO_ID, 1920);
 const bannerPoster = getVideoThumbnail(HOME_BANNER_VIDEO_ID, 2, 1920);
 
 const featureVideoUrl = getVideoUrl(FEATURE_VIDEO_ID, 1280);
-const featurePoster = getVideoThumbnail(FEATURE_VIDEO_ID, 30, 720);
+const featurePoster = getVideoThumbnail(FEATURE_VIDEO_ID, 39, 720);
 ---
 
-<section class="hero" aria-label="Welcome">
+<section class="hero" aria-label="Welcome" data-dark-hero>
   <!-- Background video — muted, autoplaying, decorative.
        The poster ensures something paints before video data arrives. -->
   <video
@@ -66,7 +66,10 @@ const featurePoster = getVideoThumbnail(FEATURE_VIDEO_ID, 30, 720);
     overflow: hidden;
     background: var(--color-evergreen-900);
     color: var(--color-cream);
-    min-height: clamp(34rem, 80vh, 48rem);
+    /* Pull the hero up behind the fixed header */
+    margin-top: calc(-1 * var(--header-height));
+    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: stretch;
   }

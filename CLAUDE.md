@@ -51,7 +51,7 @@ Vanilla CSS with design tokens in `src/styles/tokens.css`. All values (colors, s
 
 ### Environment variables
 
-Copy `.env.example` to `.env`. Variables prefixed `PUBLIC_` are inlined into the client bundle. Server-only secrets: `RECAPTCHA_SECRET_KEY`, `GSHEETS_WEBHOOK_URL`, `GSHEETS_SHARED_SECRET`.
+Copy `.env.example` to `.env`. Variables prefixed `VITE_` are inlined into the client bundle. Server-only secrets: `RECAPTCHA_SECRET_KEY`, `GSHEETS_WEBHOOK_URL`, `GSHEETS_SHARED_SECRET`.
 
 ### Content Security Policy
 

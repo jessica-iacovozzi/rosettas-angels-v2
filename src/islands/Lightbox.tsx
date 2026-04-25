@@ -163,7 +163,7 @@ export default function Lightbox({ assets }: Props) {
           z-index: var(--z-modal);
           display: grid;
           place-items: center;
-          padding: var(--space-4);
+          padding: var(--space-16);
         }
         .lightbox__panel {
           position: relative;

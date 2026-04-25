@@ -33,7 +33,7 @@ function loadScript(siteKey: string): Promise<void> {
 }
 
 export async function executeRecaptcha(action: string): Promise<string> {
-  const siteKey = import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY;
+  const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
   if (!siteKey) {
     // No-op token in dev when reCAPTCHA isn't configured — server will reject
     // with a clear message rather than failing silently.

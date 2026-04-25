@@ -61,7 +61,7 @@ export default function MobileMenu({ items, currentPath }: Props) {
       <button
         ref={triggerRef}
         type="button"
-        class="mobile-menu__trigger"
+        class={`mobile-menu__trigger${open ? ' is-open' : ''}`}
         aria-controls="mobile-menu-panel"
         aria-expanded={open}
         aria-label={open ? 'Close menu' : 'Open menu'}

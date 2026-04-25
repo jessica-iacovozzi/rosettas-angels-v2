@@ -1,45 +1,19 @@
 ---
+import { Image } from 'astro:assets';
 import { getImageUrl } from '~/lib/cloudinary';
 import { GALLERY_ASSETS_SORTED } from '~/lib/gallery-assets';
 
-// Pick two distinct gallery photos for the collage.
-const photos = GALLERY_ASSETS_SORTED.filter((a) => a.type === 'image').slice(0, 2);
+// Pick four distinct gallery photos; split 2 for story, 2 for mission.
+const photos = GALLERY_ASSETS_SORTED.filter((a) => a.type === 'image').slice(0, 4);
+const storyPhotos = photos.slice(0, 2);
+const missionPhotos = photos.slice(2, 4);
 ---
 
 <section class="section story-mission" aria-labelledby="story-heading">
-  <div class="container story-mission__grid">
-    <div class="story-mission__media reveal">
-      {photos[0] && (
-        <figure class="photo-card story-mission__photo story-mission__photo--a">
-          <img
-            src={getImageUrl(photos[0].id, 720)}
-            srcset={`${getImageUrl(photos[0].id, 480)} 480w, ${getImageUrl(photos[0].id, 720)} 720w, ${getImageUrl(photos[0].id, 960)} 960w`}
-            sizes="(min-width: 1024px) 24rem, (min-width: 640px) 40vw, 70vw"
-            width="720"
-            height="900"
-            loading="lazy"
-            decoding="async"
-            alt={photos[0].alt}
-          />
-        </figure>
-      )}
-      {photos[1] && (
-        <figure class="photo-card story-mission__photo story-mission__photo--b">
-          <img
-            src={getImageUrl(photos[1].id, 640)}
-            srcset={`${getImageUrl(photos[1].id, 360)} 360w, ${getImageUrl(photos[1].id, 640)} 640w`}
-            sizes="(min-width: 1024px) 18rem, 40vw"
-            width="640"
-            height="800"
-            loading="lazy"
-            decoding="async"
-            alt={photos[1].alt}
-          />
-        </figure>
-      )}
-    </div>
+  <div class="container story-mission__container">
 
-    <div class="story-mission__copy">
+    <!-- Row 1: Our Story — text left, images right -->
+    <div class="story-mission__row story-row">
       <article class="story-mission__block reveal">
         <p class="eyebrow">Our Story</p>
         <h2 id="story-heading" class="display story-mission__heading">
@@ -54,6 +28,67 @@ const photos = GALLERY_ASSETS_SORTED.filter((a) => a.type === 'image').slice(0, 
         </p>
       </article>
 
+      <div class="story-mission__media reveal">
+        {storyPhotos[0] && (
+          <figure class="photo-card story-mission__photo story-mission__photo--a">
+            <Image
+              src={getImageUrl(storyPhotos[0].id, 1080)}
+              widths={[480, 800, 1080]}
+              sizes="(min-width: 1024px) 26rem, (min-width: 640px) 45vw, 75vw"
+              width={800}
+              height={1000}
+              loading="lazy"
+              alt={storyPhotos[0].alt}
+            />
+          </figure>
+        )}
+        {storyPhotos[1] && (
+          <figure class="photo-card story-mission__photo story-mission__photo--b">
+            <Image
+              src={getImageUrl(storyPhotos[1].id, 640)}
+              widths={[360, 640]}
+              sizes="(min-width: 1024px) 18rem, 38vw"
+              width={640}
+              height={800}
+              loading="lazy"
+              alt={storyPhotos[1].alt}
+            />
+          </figure>
+        )}
+      </div>
+    </div>
+
+    <!-- Row 2: Our Mission — images left, text right -->
+    <div class="story-mission__row mission-row">
+      <div class="story-mission__media reveal">
+        {missionPhotos[0] && (
+          <figure class="photo-card story-mission__photo story-mission__photo--a">
+            <Image
+              src={getImageUrl(missionPhotos[0].id, 1080)}
+              widths={[480, 800, 1080]}
+              sizes="(min-width: 1024px) 26rem, (min-width: 640px) 45vw, 75vw"
+              width={800}
+              height={1000}
+              loading="lazy"
+              alt={missionPhotos[0].alt}
+            />
+          </figure>
+        )}
+        {missionPhotos[1] && (
+          <figure class="photo-card story-mission__photo story-mission__photo--b">
+            <Image
+              src={getImageUrl(missionPhotos[1].id, 640)}
+              widths={[360, 640]}
+              sizes="(min-width: 1024px) 18rem, 38vw"
+              width={640}
+              height={800}
+              loading="lazy"
+              alt={missionPhotos[1].alt}
+            />
+          </figure>
+        )}
+      </div>
+
       <article class="story-mission__block reveal">
         <p class="eyebrow">Our Mission</p>
         <h2 class="display story-mission__heading">
@@ -67,19 +102,31 @@ const photos = GALLERY_ASSETS_SORTED.filter((a) => a.type === 'image').slice(0, 
         </p>
       </article>
     </div>
+
   </div>
 </section>
 
 <style>
   .story-mission { background: var(--color-cream); }
-  .story-mission__grid {
+
+  .story-mission__container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+  }
+
+  .story-mission__row {
     display: grid;
     gap: var(--space-12);
     grid-template-columns: 1fr;
-    align-items: center;
+    align-items: start;
   }
   @media (min-width: 1024px) {
-    .story-mission__grid {
+    .story-row {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: var(--space-16);
+    }
+    .mission-row {
       grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
       gap: var(--space-16);
     }
@@ -87,8 +134,8 @@ const photos = GALLERY_ASSETS_SORTED.filter((a) => a.type === 'image').slice(0, 
 
   .story-mission__media {
     position: relative;
-    aspect-ratio: 4 / 5;
-    max-width: 32rem;
+    aspect-ratio: 4 / 3;
+    max-width: 36rem;
     margin-inline: auto;
     width: 100%;
   }
@@ -100,23 +147,25 @@ const photos = GALLERY_ASSETS_SORTED.filter((a) => a.type === 'image').slice(0, 
   .story-mission__photo--a {
     inset-block-start: 0;
     inset-inline-start: 0;
-    width: 70%;
+    width: 76%;
     transform: rotate(-2deg);
+    z-index: 1;
   }
   .story-mission__photo--b {
-    inset-block-end: 0;
+    inset-block-start: 32%;
     inset-inline-end: 0;
-    width: 55%;
+    width: 60%;
     transform: rotate(3.5deg);
     z-index: 2;
   }
 
-  .story-mission__copy {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-12);
+  /* On mobile the mission row stacks: pull text above photos so it reads
+     Story text → Story photos → Mission text → Mission photos */
+  @media (max-width: 1023px) {
+    .mission-row .story-mission__block { order: -1; }
   }
+
+  .story-mission__block { display: flex; flex-direction: column; }
   .story-mission__heading { color: var(--color-evergreen); }
-  .story-mission__block .eyebrow { margin-block-end: var(--space-3); }
   .story-mission__block .lede { margin-block-start: var(--space-5); }
 </style>

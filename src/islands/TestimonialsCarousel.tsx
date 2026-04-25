@@ -124,7 +124,7 @@ export default function TestimonialsCarousel({ testimonials }: Props) {
         .testimonials__viewport {
           display: grid;
           grid-template-columns: 1fr;
-          gap: var(--space-6);
+          gap: var(--space-4);
           align-items: stretch;
         }
         @media (min-width: 1024px) {
@@ -198,18 +198,17 @@ export default function TestimonialsCarousel({ testimonials }: Props) {
           font-size: 2em;
           line-height: 0.5;
           vertical-align: -0.25em;
-          margin-inline-end: 0.1em;
+          margin-inline-end: 0.3em;
         }
         .testimonial-card__cite {
           font-style: normal;
           font-family: var(--font-body);
           font-weight: 700;
-          font-size: var(--fs-sm);
+          font-size: var(--fs-xs);
           letter-spacing: var(--tracking-wide);
           text-transform: uppercase;
-          color: var(--color-ink-soft);
+          color: var(--color-ink-muted);
         }
-        .testimonial-card__cite-name { color: var(--color-evergreen); }
       `}</style>
     </div>
   );

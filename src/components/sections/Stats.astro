@@ -27,10 +27,33 @@ const STATS = [
       <span class="underline-mark">Since 2009</span> in Montreal.
     </p>
   </div>
+  <!-- Wave divider: transitions from evergreen (stats bg) to cream (next section) -->
+  <div class="stats__wave" aria-hidden="true">
+    <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,30 C240,60 480,0 720,30 C960,60 1200,0 1440,30 L1440,60 L0,60 Z" fill="#faf4e8"/>
+    </svg>
+  </div>
 </section>
 
 <style>
-  .stats { color: var(--color-cream); }
+  .stats {
+    color: var(--color-cream);
+    padding-block-end: 0; /* wave replaces bottom padding */
+  }
+
+  .stats__inner { padding-block-end: 75px; }
+
+  .stats__wave {
+    display: block;
+    line-height: 0;
+    overflow: hidden;
+    margin-bottom: -2px; /* eliminate subpixel gap between wave and next section */
+  }
+  .stats__wave svg {
+    display: block;
+    width: 100%;
+    height: clamp(40px, 4vw, 70px);
+  }
   .stats__grid {
     list-style: none;
     display: grid;

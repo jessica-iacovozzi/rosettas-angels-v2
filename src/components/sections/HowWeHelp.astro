@@ -1,24 +1,19 @@
 ---
 const ACTIVITIES = [
   {
-    title: 'Gift Wrapping',
-    description: 'Help create magical moments by wrapping presents for children and families.',
+    title: 'Nourishment & Home Comfort',
+    description: 'Your generosity helps us provide families with fresh produce, nutritious staples, and essential items like refrigerators so they can safely store and prepare wholesome meals. Every food basket is assembled with care, helping families celebrate the season with warmth and dignity.',
+    icon: 'apple',
+  },
+  {
+    title: 'Everyday Essentials & Mobility',
+    description: 'Stability means more than food on the table. Through your contributions, families receive personal care products, household necessities, beds for restful sleep, and bus passes to stay connected to work, school, and vital appointments — supporting their independence all year long.',
+    icon: 'essentials',
+  },
+  {
+    title: 'Warmth & Holiday Joy',
+    description: 'Every family deserves to feel cared for during the holidays. Your donations make it possible to provide cozy winter clothing — coats, boots, hats, and gloves — to protect families through Montreal\'s cold months, alongside thoughtful, personalized gifts that bring joy and connection to every home.',
     icon: 'gift',
-  },
-  {
-    title: 'Basket Assembly',
-    description: 'Assist with picking up donations and supplies across the city.',
-    icon: 'basket',
-  },
-  {
-    title: 'Errand Running',
-    description: 'Help with various errands and supply runs.',
-    icon: 'errand',
-  },
-  {
-    title: 'Basket Delivery',
-    description: 'Help distribute completed baskets directly to families in the Montreal area.',
-    icon: 'truck',
   },
 ];
 ---
@@ -28,7 +23,7 @@ const ACTIVITIES = [
     <header class="how-we-help__header reveal">
       <p class="eyebrow">How We Support Families</p>
       <h2 id="how-heading" class="display">
-        Four ways your <span class="underline-mark">hands</span> make&nbsp;magic.
+        Three ways your <span class="underline-mark">generosity</span> reaches&nbsp;families.
       </h2>
     </header>
 
@@ -36,34 +31,30 @@ const ACTIVITIES = [
       {ACTIVITIES.map((a) => (
         <li class="how-we-help__card reveal">
           <div class="how-we-help__icon" aria-hidden="true">
+            {a.icon === 'apple' && (
+<svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M16 8 C16 5 18 3 20 3"/>
+  <path d="M16 7 C17 5 21 4 21 7 C21 9 17 9 16 7 Z"/>
+  <path d="M16 9 C14 9 11 8 9 9 C6 10 4 13 4 17 C4 22 7 27 11 28 C13 29 14 28 16 28 C18 28 19 29 21 28 C25 27 28 22 28 17 C28 13 26 10 23 9 C21 8 18 9 16 9 Z"/>
+</svg>
+            )}
+            {a.icon === 'essentials' && (
+              <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="11" width="22" height="16" rx="2"/>
+                <path d="M11 11V8a5 5 0 0110 0v3"/>
+                <path d="M5 19h22"/>
+                <circle cx="16" cy="19" r="2" fill="currentColor" stroke="none"/>
+              </svg>
+            )}
             {a.icon === 'gift' && (
-              <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="4" y="12" width="24" height="14" rx="1"/>
-                <path d="M2 12h28M16 12v14M16 12c-2-4-7-4-7-1s5 1 7 1zM16 12c2-4 7-4 7-1s-5 1-7 1z"/>
-              </svg>
-            )}
-            {a.icon === 'basket' && (
-              <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12h26l-2 14H5z"/>
-                <path d="M10 12l4-7M22 12l-4-7"/>
-                <path d="M12 17v5M16 17v5M20 17v5"/>
-              </svg>
-            )}
-            {a.icon === 'errand' && (
-              <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M6 7h14l3 9H6z"/>
-                <circle cx="11" cy="22" r="2.5"/>
-                <circle cx="22" cy="22" r="2.5"/>
-                <path d="M2 7h4M20 16h6"/>
-              </svg>
-            )}
-            {a.icon === 'truck' && (
-              <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="9" width="16" height="13" rx="1"/>
-                <path d="M19 13h6l4 4v5h-10z"/>
-                <circle cx="9" cy="24" r="2.5"/>
-                <circle cx="23" cy="24" r="2.5"/>
-              </svg>
+<svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="4" y="15" width="24" height="13" rx="2"/>
+  <rect x="3" y="10" width="26" height="6" rx="2"/>
+  <line x1="16" y1="10" x2="16" y2="28"/>
+  <path d="M16 10 C16 7 11 4 11 7 C11 10 16 10 16 10"/>
+  <path d="M16 10 C16 7 21 4 21 7 C21 10 16 10 16 10"/>
+  <circle cx="16" cy="10" r="1.4" fill="currentColor" stroke="none"/>
+</svg>
             )}
           </div>
           <h3 class="how-we-help__title">{a.title}</h3>
@@ -88,7 +79,7 @@ const ACTIVITIES = [
     grid-template-columns: 1fr;
   }
   @media (min-width: 640px) { .how-we-help__grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1024px) { .how-we-help__grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 1024px) { .how-we-help__grid { grid-template-columns: repeat(3, 1fr); } }
 
   .how-we-help__card {
     background: var(--color-cream);
@@ -97,6 +88,7 @@ const ACTIVITIES = [
     border: 1px solid var(--color-border);
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: var(--space-3);
     transition: transform var(--duration-base) var(--ease-out),
                 box-shadow var(--duration-base) var(--ease-out);
@@ -117,11 +109,12 @@ const ACTIVITIES = [
     font-family: var(--font-display);
     font-weight: 800;
     text-transform: uppercase;
+    text-align: center;
     letter-spacing: var(--tracking-tight);
     font-size: var(--fs-xl);
     color: var(--color-evergreen);
   }
-  .how-we-help__desc { color: var(--color-ink-soft); font-size: var(--fs-sm); line-height: var(--lh-relaxed); }
+  .how-we-help__desc { color: var(--color-ink-soft); font-size: var(--fs-sm); line-height: var(--lh-relaxed); text-align: center; }
 
   .how-we-help__cta { text-align: center; margin-block-start: var(--space-12); }
 </style>

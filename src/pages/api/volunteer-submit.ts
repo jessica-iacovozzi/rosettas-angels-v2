@@ -73,7 +73,15 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   // --- Sanitize ---
+  // --- Forward to Apps Script ---
+  const webhookUrl = process.env.GSHEETS_WEBHOOK_URL;
+  const sharedSecret = process.env.GSHEETS_SHARED_SECRET;
+  if (!webhookUrl || !sharedSecret) {
+    return json({ ok: false, message: 'Server misconfiguration.', errorCode: 'missing_env' }, 500);
+  }
+
   const payload = {
+    secret: sharedSecret,
     Name: sanitize(body.Name),
     Email: sanitize(body.Email),
     Phone: sanitize(body.Phone),
@@ -83,19 +91,11 @@ export const POST: APIRoute = async ({ request }) => {
     'Date added': sanitize(body['Date added']),
   };
 
-  // --- Forward to Apps Script ---
-  const webhookUrl = process.env.GSHEETS_WEBHOOK_URL;
-  const sharedSecret = process.env.GSHEETS_SHARED_SECRET;
-  if (!webhookUrl || !sharedSecret) {
-    return json({ ok: false, message: 'Server misconfiguration.', errorCode: 'missing_env' }, 500);
-  }
-
   try {
     const upstream = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-Shared-Secret': sharedSecret,
       },
       body: JSON.stringify(payload),
     });

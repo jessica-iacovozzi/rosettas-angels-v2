@@ -1,10 +1,17 @@
 ---
 import BrandMark from './BrandMark.astro';
+
+interface Props {
+  /** Background color of the wave divider div — should match the last section above the footer. */
+  waveBgColor?: string;
+}
+
+const { waveBgColor } = Astro.props;
 const year = new Date().getFullYear();
 ---
 
 <!-- Wave divider into the dark footer -->
-<div class="divider-wave" aria-hidden="true">
+<div class="divider-wave" aria-hidden="true" style={waveBgColor ? `background-color: ${waveBgColor};` : undefined}>
   <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
     <path
       d="M0,40 C240,80 480,0 720,32 C960,64 1200,16 1440,48 L1440,80 L0,80 Z"
@@ -15,7 +22,7 @@ const year = new Date().getFullYear();
 
 <footer class="site-footer" role="contentinfo" data-theme="dark">
   <div class="container site-footer__inner">
-    <div class="site-footer__brand-block">
+    <div class="site-footer__brand-block site-footer__mobile-hide">
       <a href="/" class="site-footer__brand" aria-label="Rosetta's Angels — home">
         <BrandMark />
       </a>
@@ -25,7 +32,7 @@ const year = new Date().getFullYear();
       </p>
     </div>
 
-    <nav class="site-footer__nav" aria-label="Footer">
+    <nav class="site-footer__nav site-footer__mobile-hide" aria-label="Footer">
       <h2 class="small-caps site-footer__heading">Explore</h2>
       <ul>
         <li><a href="/">Home</a></li>
@@ -36,7 +43,7 @@ const year = new Date().getFullYear();
       </ul>
     </nav>
 
-    <div class="site-footer__contact">
+    <div class="site-footer__contact site-footer__mobile-hide">
       <h2 class="small-caps site-footer__heading">Contact</h2>
       <ul>
         <li>
@@ -62,7 +69,7 @@ const year = new Date().getFullYear();
   <div class="container site-footer__base">
     <small>
       © {year} Rosetta's Angels. All rights reserved.
-      <span class="site-footer__credit">Made with love by the Angels community.</span>
+      <span class="site-footer__credit">Made with love by <a href="https://jessicaiacovozzi.ca" target="_blank" rel="noopener">Jessica Iacovozzi</a>.</span>
     </small>
   </div>
 </footer>
@@ -115,6 +122,10 @@ const year = new Date().getFullYear();
     font-size: var(--fs-sm);
   }
 
+  @media (max-width: 767px) {
+    .site-footer__mobile-hide { display: none; }
+  }
+
   .site-footer__transparency p {
     color: var(--color-on-dark-soft);
     font-size: var(--fs-sm);
@@ -127,9 +138,9 @@ const year = new Date().getFullYear();
     border-block-start: 1px solid rgba(250, 244, 232, 0.15);
     color: var(--color-on-dark-soft);
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-4);
+    justify-content: center;
     font-size: var(--fs-xs);
   }
   .site-footer__credit { color: var(--color-on-dark-soft); }
+  .site-footer__credit a { color: var(--color-on-dark-soft); }
 </style>

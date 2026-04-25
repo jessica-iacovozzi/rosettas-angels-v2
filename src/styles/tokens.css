@@ -117,7 +117,7 @@
 
   /* — Header offset (used for hash scroll) — */
   --header-height: 4.5rem;
-  --hash-offset-mobile: 20px;
+  --hash-offset-mobile: calc(var(--header-height) + 8px);
   --hash-offset-tablet: 100px;
   --hash-offset-desktop: 150px;
 }

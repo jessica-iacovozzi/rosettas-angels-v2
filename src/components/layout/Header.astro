@@ -53,11 +53,20 @@ const isActive = (href: string) =>
 
 <style>
   .site-header {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     z-index: var(--z-sticky);
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background-color var(--duration-base) var(--ease-out),
+                border-color var(--duration-base) var(--ease-out);
+  }
+  .site-header.is-scrolled {
     background: var(--color-cream);
-    border-bottom: 1px solid var(--color-border);
+    border-bottom-color: var(--color-border);
     backdrop-filter: saturate(140%) blur(6px);
     -webkit-backdrop-filter: saturate(140%) blur(6px);
   }
@@ -96,8 +105,15 @@ const isActive = (href: string) =>
     padding: var(--space-2) var(--space-1);
     position: relative;
     border-radius: var(--radius-sm);
+    transition: color var(--duration-fast) var(--ease-out);
   }
   .site-header__link:hover { color: var(--color-amber-600); }
+
+  /* Transparent + dark-hero variant: flip text to cream */
+  :global(.site-header.is-on-dark .site-header__brand) { color: var(--color-cream); }
+  :global(.site-header.is-on-dark .site-header__link) { color: var(--color-cream); }
+  :global(.site-header.is-on-dark .site-header__link:hover) { color: var(--color-amber); }
+  :global(.site-header.is-on-dark .mobile-menu__trigger) { color: var(--color-cream); }
   .site-header__link.is-active::after {
     content: '';
     position: absolute;
@@ -127,8 +143,16 @@ const isActive = (href: string) =>
     color: var(--color-evergreen);
     background: transparent;
     border-radius: var(--radius-sm);
+    position: relative;
+    z-index: 0;
   }
   :global(.mobile-menu__trigger:hover) { color: var(--color-amber-600); }
+  /* When menu is open, lift trigger above the panel (z-index 200) and make it visible on dark */
+  :global(.mobile-menu__trigger.is-open) {
+    z-index: 300;
+    color: var(--color-cream);
+  }
+  :global(.mobile-menu__trigger.is-open:hover) { color: var(--color-amber); }
 
   :global(.mobile-menu__overlay) {
     position: fixed;
@@ -192,5 +216,22 @@ const isActive = (href: string) =>
       transition: none !important;
       animation: none !important;
     }
+    .site-header { transition: none !important; }
   }
 </style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('.site-header');
+  if (header) {
+    const hasDarkHero = !!document.querySelector('[data-dark-hero]');
+
+    function updateHeader() {
+      const atTop = window.scrollY <= 10;
+      (header as HTMLElement).classList.toggle('is-scrolled', !atTop);
+      (header as HTMLElement).classList.toggle('is-on-dark', atTop && hasDarkHero);
+    }
+
+    updateHeader();
+    window.addEventListener('scroll', updateHeader, { passive: true });
+  }
+</script>

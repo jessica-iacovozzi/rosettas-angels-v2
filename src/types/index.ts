@@ -35,7 +35,6 @@ export type GalleryAssetType = 'image' | 'video';
 
 export interface GalleryAsset {
   type: GalleryAssetType;
-  /** Cloudinary public_id, no extension */
   id: string;
   /** Year if the asset corresponds to an event year — used for label/sort */
   year?: number;

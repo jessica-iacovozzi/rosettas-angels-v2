@@ -8,12 +8,17 @@ import { auto as autoFormat } from '@cloudinary/url-gen/qualifiers/format';
 import { quality } from '@cloudinary/url-gen/actions/delivery';
 import { format } from '@cloudinary/url-gen/actions/delivery';
 const CLOUD_NAME =
-  import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME ?? 'rosettasangels';
+  import.meta.env.VITE_CLOUDINARY_CLOUD_NAME ?? 'rosettasangels';
+const ROOT_FOLDER =
+  import.meta.env.VITE_CLOUDINARY_ROOT_FOLDER ?? 'rosettas-angels';
 
 const cld = new Cloudinary({
   cloud: { cloudName: CLOUD_NAME },
   url: { secure: true },
 });
+
+const prefixed = (id: string) =>
+  id.startsWith(ROOT_FOLDER + '/') ? id : `${ROOT_FOLDER}/${id}`;
 
 const imageCache = new Map<string, string>();
 const videoCache = new Map<string, string>();
@@ -26,7 +31,7 @@ export function getImageUrl(publicId: string, width = 0): string {
   if (cached) return cached;
 
   let img = cld
-    .image(publicId)
+    .image(prefixed(publicId))
     .delivery(quality(autoQuality()))
     .delivery(format(autoFormat()));
 
@@ -52,7 +57,7 @@ export function getVideoUrl(publicId: string, width = 1920): string {
   if (cached) return cached;
 
   const url = cld
-    .video(publicId)
+    .video(prefixed(publicId))
     .delivery(quality(autoQuality()))
     .delivery(format(autoFormat()))
     .resize(scale().width(width))
@@ -77,7 +82,7 @@ export function getVideoThumbnail(
   const url =
     `https://res.cloudinary.com/${CLOUD_NAME}/video/upload/` +
     `so_${startOffsetSeconds},w_${width},c_scale,q_auto,f_jpg/` +
-    `${publicId}.jpg`;
+    `${prefixed(publicId)}.jpg`;
   thumbCache.set(key, url);
   return url;
 }

@@ -44,3 +44,12 @@ src/
 Volunteer form submissions are POSTed (server-side, from `/api/volunteer-submit`)
 to a Google Apps Script Web App that appends a row to the Sheet. See
 `docs/apps-script-setup.md` for the script source and deployment steps.
+
+## TODO
+
+- Fix Donorbox integration
+- Make testimonials container static height
+- Add logo to brand mark
+- Make lightbox image transition smoother (keep height when loading)
+- Add wave on top of stats section
+- Add wave on top and bottom of quote section
