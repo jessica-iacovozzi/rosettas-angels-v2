@@ -7,13 +7,23 @@ import HowWeHelp from '~/components/sections/HowWeHelp.astro';
 import Stats from '~/components/sections/Stats.astro';
 import GetInvolved from '~/components/sections/GetInvolved.astro';
 import HomeContact from '~/components/sections/HomeContact.astro';
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'NGO',
+  name: "Rosetta's Angels",
+  url: 'https://www.rosettasangels.org',
+  description:
+    "Montreal-based nonprofit bringing holiday joy to families in need through an annual basket brigade.",
+  email: 'info@rosettasangels.org',
+};
 ---
 
 <BaseLayout
-  title="Home"
-  description="Rosetta's Angels is a Montreal-based non-profit organization bringing holiday joy to families in need through our annual basket brigade."
+  title="Rosetta's Angels | Montreal Holiday Basket Brigade"
+  description="Rosetta's Angels is a Montreal-based non-profit bringing holiday joy to families in need — delivering food, gifts, and warmth through our annual basket brigade every December."
   footerWaveBgColor="var(--color-cream-200)"
 >
+  <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(orgSchema)} />
   <HomeHero />
   <StoryMission />
   <QuoteBlock

@@ -47,9 +47,11 @@ to a Google Apps Script Web App that appends a row to the Sheet. See
 
 ## TODO
 
-- Fix Donorbox integration
 - Make testimonials container static height
-- Add logo to brand mark
-- Make lightbox image transition smoother (keep height when loading)
-- Add wave on top of stats section
-- Add wave on top and bottom of quote section
+- Add french locale
+
+### After production deployment
+
+- Submit sitemap to Google Search Console
+- Set up Google Analytics
+- Update Donorbox colour

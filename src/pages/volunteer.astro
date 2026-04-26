@@ -2,6 +2,22 @@
 import BaseLayout from '~/layouts/BaseLayout.astro';
 import VolunteerForm from '~/islands/VolunteerForm.tsx';
 import { EVENT_DATES, isSingleDayEvent, formatEventDate } from '~/lib/event-config';
+const eventSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: "Rosetta's Angels Holiday Basket Brigade",
+  description:
+    "Join Rosetta's Angels as a volunteer to help pack and deliver holiday baskets to Montreal families in need. Roles include gift wrapping, basket assembly, errand running, and delivery.",
+  startDate: EVENT_DATES[0],
+  endDate: EVENT_DATES[EVENT_DATES.length - 1],
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  organizer: {
+    '@type': 'NGO',
+    name: "Rosetta's Angels",
+    url: 'https://www.rosettasangels.org',
+  },
+};
 
 const ACTIVITIES = [
   {
@@ -32,10 +48,11 @@ const ACTIVITIES = [
 ---
 
 <BaseLayout
-  title="Volunteer"
-  description="Sign up to volunteer with Rosetta's Angels and help bring holiday joy to Montreal families."
+  title="Volunteer in Montreal | Rosetta's Angels Holiday Brigade"
+  description="Sign up to volunteer with Rosetta's Angels and help bring holiday joy to Montreal families in need. Roles include gift wrapping, basket assembly, errand running, and basket delivery."
   footerWaveBgColor="var(--color-wheat)"
 >
+  <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(eventSchema)} />
   <section class="section volunteer-hero section--evergreen" aria-labelledby="volunteer-heading">
     <div class="container">
       <p class="eyebrow volunteer-hero__eyebrow">Volunteer</p>

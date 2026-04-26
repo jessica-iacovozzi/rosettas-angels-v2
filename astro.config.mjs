@@ -30,7 +30,7 @@ export default defineConfig({
           "img-src 'self' data: blob: https:; " +
           "media-src 'self' blob: https://res.cloudinary.com; " +
           "frame-src https://donorbox.org https://www.google.com; " +
-          "connect-src 'self' https://api.emailjs.com https://www.google.com https://script.google.com https://script.googleusercontent.com;",
+          "connect-src 'self' https://donorbox.org https://api.emailjs.com https://www.google.com https://script.google.com https://script.googleusercontent.com;",
       },
     },
   },

@@ -12,9 +12,22 @@ interface Props {
  */
 export default function Lightbox({ assets }: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [imgLoaded, setImgLoaded] = useState(true);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const lastTriggerRef = useRef<HTMLElement | null>(null);
+  const mediaRef = useRef<HTMLDivElement>(null);
+  const savedHeightRef = useRef<number>(0);
+
+  /** Capture current media height then navigate to a new index with a fade transition. */
+  function captureAndGo(updater: (i: number) => number) {
+    if (mediaRef.current) {
+      const h = mediaRef.current.offsetHeight;
+      if (h > 0) savedHeightRef.current = h;
+    }
+    setImgLoaded(false);
+    setOpenIndex((i) => (i == null ? 0 : updater(i)));
+  }
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -26,6 +39,8 @@ export default function Lightbox({ assets }: Props) {
       const idx = Number(trigger.dataset.lightboxIndex);
       if (Number.isNaN(idx)) return;
       lastTriggerRef.current = trigger;
+      savedHeightRef.current = 0; // fresh open — no saved height
+      setImgLoaded(true);
       setOpenIndex(idx);
     }
     document.addEventListener('click', onClick);
@@ -43,10 +58,10 @@ export default function Lightbox({ assets }: Props) {
       lastTriggerRef.current?.focus();
     }
     function next() {
-      setOpenIndex((i) => (i == null ? 0 : (i + 1) % assets.length));
+      captureAndGo((i) => (i + 1) % assets.length);
     }
     function prevImg() {
-      setOpenIndex((i) => (i == null ? 0 : (i - 1 + assets.length) % assets.length));
+      captureAndGo((i) => (i - 1 + assets.length) % assets.length);
     }
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') close();
@@ -110,32 +125,47 @@ export default function Lightbox({ assets }: Props) {
           type="button"
           class="lightbox__btn lightbox__btn--prev"
           aria-label="Previous item"
-          onClick={() =>
-            setOpenIndex((i) =>
-              i == null ? 0 : (i - 1 + assets.length) % assets.length
-            )
-          }
+          onClick={() => captureAndGo((i) => (i - 1 + assets.length) % assets.length)}
         >
           <ChevronLeft />
         </button>
 
-        <div class="lightbox__media">
-          {a.type === 'video' ? (
-            <video
-              src={a.url}
-              poster={a.thumbnailUrl}
-              controls
-              autoPlay
-              playsInline
-              preload="metadata"
-              key={a.id}
-            >
-              <track kind="captions" srcLang="en" label="English" />
-              Sorry, your browser does not support embedded videos.
-            </video>
-          ) : (
-            <img src={a.url} alt={a.alt} key={a.id} loading="eager" decoding="async" />
-          )}
+        <div
+          class="lightbox__media"
+          ref={mediaRef}
+        >
+          <div class="lightbox__media-img">
+            {a.type === 'video' ? (
+              <video
+                src={a.url}
+                poster={a.thumbnailUrl}
+                controls
+                autoPlay
+                playsInline
+                preload="metadata"
+                key={a.id}
+                onLoadedData={() => setImgLoaded(true)}
+              >
+                <track kind="captions" srcLang="en" label="English" />
+                Sorry, your browser does not support embedded videos.
+              </video>
+            ) : (
+              <img
+                src={a.url}
+                alt={a.alt}
+                key={a.id}
+                loading="eager"
+                decoding="async"
+                class={imgLoaded ? '' : 'is-loading'}
+                onLoad={() => setImgLoaded(true)}
+              />
+            )}
+            {!imgLoaded && (
+              <div class="lightbox__spinner" aria-hidden="true">
+                <SpinnerIcon />
+              </div>
+            )}
+          </div>
           <p class="lightbox__caption">
             <span class="sr-only">Caption: </span>
             {a.alt}
@@ -149,7 +179,7 @@ export default function Lightbox({ assets }: Props) {
           type="button"
           class="lightbox__btn lightbox__btn--next"
           aria-label="Next item"
-          onClick={() => setOpenIndex((i) => (i == null ? 0 : (i + 1) % assets.length))}
+          onClick={() => captureAndGo((i) => (i + 1) % assets.length)}
         >
           <ChevronRight />
         </button>
@@ -168,28 +198,55 @@ export default function Lightbox({ assets }: Props) {
         .lightbox__panel {
           position: relative;
           width: min(72rem, 100%);
-          max-height: 92vh;
+          height: calc(100vh - 2 * var(--space-16));
           display: grid;
           grid-template-columns: auto 1fr auto;
           align-items: center;
           gap: var(--space-3);
         }
         .lightbox__media {
+          height: 100%;
           background: #000;
           border-radius: var(--radius-md);
           overflow: hidden;
-          max-height: 92vh;
           display: flex;
           flex-direction: column;
         }
+        .lightbox__media-img {
+          flex: 1;
+          min-height: 0;
+          position: relative;
+          overflow: hidden;
+          background: #000;
+        }
         .lightbox__media img,
         .lightbox__media video {
-          max-width: 100%;
-          max-height: calc(92vh - 4rem);
-          object-fit: contain;
-          background: #000;
+          position: absolute;
+          inset: 0;
           width: 100%;
-          height: auto;
+          height: 100%;
+          object-fit: contain;
+          transition: opacity 200ms ease;
+        }
+        .lightbox__media img.is-loading {
+          opacity: 0;
+        }
+        .lightbox__spinner {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--color-amber);
+          pointer-events: none;
+        }
+        .lightbox__spinner svg {
+          width: 40px;
+          height: 40px;
+          animation: lightbox-spin 0.8s linear infinite;
+        }
+        @keyframes lightbox-spin {
+          to { transform: rotate(360deg); }
         }
         .lightbox__caption {
           background: var(--color-evergreen);
@@ -259,6 +316,13 @@ function ChevronRight() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
       <polyline points="7 4 14 10 7 16" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  );
+}
+function SpinnerIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="44 16" />
     </svg>
   );
 }

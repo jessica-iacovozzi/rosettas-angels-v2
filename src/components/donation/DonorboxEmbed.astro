@@ -1,19 +1,24 @@
 ---
 const campaign = import.meta.env.VITE_DONORBOX_CAMPAIGN ?? 'help-families-in-need-this-holiday-season';
+const embedUrl = `https://donorbox.org/embed/${campaign}`;
 ---
 
 <div class="donorbox" data-campaign={campaign}>
   <div class="donorbox__loading" data-loading-state aria-live="polite">
     <span class="donorbox__spinner" aria-hidden="true"></span>
-    <p>Preparing your donation form…</p>
   </div>
 
-  <donorbox-widget
-    campaign={campaign}
-    type="donation_form"
-    enable-auto-scroll="true"
-    style="display:block;width:100%;"
-  ></donorbox-widget>
+  <iframe
+    src={embedUrl}
+    name="donorbox"
+    id="donorbox-iframe"
+    allow="payment"
+    seamless
+    frameborder="0"
+    scrolling="no"
+    style="display:none;width:100%;min-width:310px;min-height:550px;"
+    title="Donorbox donation form"
+  ></iframe>
 </div>
 
 <style>
@@ -21,8 +26,6 @@ const campaign = import.meta.env.VITE_DONORBOX_CAMPAIGN ?? 'help-families-in-nee
     position: relative;
     min-height: 36rem;
     background: var(--color-cream);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
     padding: var(--space-4);
     overflow: hidden;
   }
@@ -52,48 +55,48 @@ const campaign = import.meta.env.VITE_DONORBOX_CAMPAIGN ?? 'help-families-in-nee
 </style>
 
 <script>
-  // Per spec: load donorbox.org/widgets.js as a module on mount, show
-  // loading until ready (≥300ms), and clean up on unmount/page hide.
-  const SCRIPT_SRC = 'https://donorbox.org/widgets.js';
+  const SCRIPT_SRC = 'https://donorbox.org/widget.js';
   const MIN_VISIBLE_MS = 300;
   const mountedAt = Date.now();
 
-  function hideLoadingWhenReady() {
+  function revealIframe() {
     const elapsed = Date.now() - mountedAt;
     const wait = Math.max(0, MIN_VISIBLE_MS - elapsed);
     setTimeout(() => {
-      const el = document.querySelector<HTMLElement>('[data-loading-state]');
-      if (el) el.hidden = true;
+      const loading = document.querySelector<HTMLElement>('[data-loading-state]');
+      const iframe = document.getElementById('donorbox-iframe') as HTMLIFrameElement | null;
+      if (loading) loading.hidden = true;
+      if (iframe) iframe.style.display = 'block';
     }, wait);
+  }
+
+  function showError() {
+    const el = document.querySelector<HTMLElement>('[data-loading-state]');
+    if (el) {
+      el.textContent = '';
+      const p = document.createElement('p');
+      p.style.color = 'var(--color-error)';
+      p.append('The donation form failed to load. Please refresh, or email ');
+      const a = document.createElement('a');
+      a.href = 'mailto:info@rosettasangels.org';
+      a.textContent = 'info@rosettasangels.org';
+      p.append(a);
+      p.append(' to donate by another method.');
+      el.append(p);
+    }
   }
 
   function loadScript() {
     if (document.querySelector(`script[src="${SCRIPT_SRC}"]`)) {
-      hideLoadingWhenReady();
+      revealIframe();
       return;
     }
     const s = document.createElement('script');
     s.src = SCRIPT_SRC;
-    s.type = 'module';
+    s.setAttribute('paypalExpress', 'false');
     s.async = true;
-    s.onload = hideLoadingWhenReady;
-    s.onerror = () => {
-      const el = document.querySelector<HTMLElement>('[data-loading-state]');
-      if (el) {
-        el.textContent = '';
-        const p = document.createElement('p');
-        p.style.color = 'var(--color-error)';
-        p.append(
-          'The donation form failed to load. Please refresh, or email ',
-        );
-        const a = document.createElement('a');
-        a.href = 'mailto:info@rosettasangels.org';
-        a.textContent = 'info@rosettasangels.org';
-        p.append(a);
-        p.append(' to donate by another method.');
-        el.append(p);
-      }
-    };
+    s.onload = revealIframe;
+    s.onerror = showError;
     document.head.appendChild(s);
   }
 
@@ -102,6 +105,6 @@ const campaign = import.meta.env.VITE_DONORBOX_CAMPAIGN ?? 'help-families-in-nee
   // Cleanup on bfcache page-hide.
   window.addEventListener('pagehide', () => {
     const s = document.querySelector(`script[src="${SCRIPT_SRC}"]`);
-    if (s && s.parentNode) s.parentNode.removeChild(s);
+    if (s?.parentNode) s.parentNode.removeChild(s);
   });
 </script>

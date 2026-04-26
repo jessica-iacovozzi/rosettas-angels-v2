@@ -66,10 +66,19 @@ export default function TestimonialsCarousel({ testimonials }: Props) {
           <Cite name={testimonials[prevIdx].name} role={testimonials[prevIdx].role} />
         </article>
 
-        <article class="testimonial-card testimonial-card--active" aria-live="polite">
-          <Quote text={testimonials[active].quote} />
-          <Cite name={testimonials[active].name} role={testimonials[active].role} />
-        </article>
+        {/* All active cards stacked so the slot height equals the tallest card */}
+        <div class="testimonials__active-slot">
+          {testimonials.map((t, i) => (
+            <article
+              key={i}
+              class={`testimonial-card testimonial-card--active${i !== active ? ' testimonial-card--inactive' : ''}`}
+              aria-hidden={i !== active ? 'true' : undefined}
+            >
+              <Quote text={t.quote} />
+              <Cite name={t.name} role={t.role} />
+            </article>
+          ))}
+        </div>
 
         <article class="testimonial-card testimonial-card--side" aria-hidden="true">
           <Quote text={testimonials[nextIdx].quote} />
@@ -153,11 +162,23 @@ export default function TestimonialsCarousel({ testimonials }: Props) {
         @media (min-width: 1024px) {
           .testimonial-card--side { display: flex; }
         }
+        .testimonials__active-slot {
+          display: grid;
+        }
+        .testimonials__active-slot > * {
+          grid-column: 1;
+          grid-row: 1;
+        }
         .testimonial-card--active {
           background: var(--color-cream);
           box-shadow: var(--shadow-md);
           border-color: var(--color-amber);
           border-width: 2px;
+        }
+        .testimonial-card--inactive {
+          opacity: 0;
+          pointer-events: none;
+          user-select: none;
         }
         .testimonials__controls {
           display: flex;

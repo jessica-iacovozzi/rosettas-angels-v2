@@ -7,6 +7,11 @@ const {
 ---
 
 <section class="section section--pine quote-block" aria-label="Quote">
+  <div class="quote-block__wave quote-block__wave--top" aria-hidden="true">
+    <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,30 C240,0 480,60 720,30 C960,0 1200,60 1440,30 L1440,0 L0,0 Z" fill="#faf4e8"/>
+    </svg>
+  </div>
   <div class="container--narrow quote-block__inner">
     <span class="quote-block__mark" aria-hidden="true">&ldquo;</span>
     <blockquote class="quote-block__text italic-display">
@@ -17,14 +22,35 @@ const {
       {attributionRole && <span class="quote-block__attr-role"> · {attributionRole}</span>}
     </footer>
   </div>
+  <div class="quote-block__wave quote-block__wave--bottom" aria-hidden="true">
+    <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,30 C240,60 480,0 720,30 C960,60 1200,0 1440,30 L1440,60 L0,60 Z" fill="#e8dfc8"/>
+    </svg>
+  </div>
 </section>
 
 <style>
-  .quote-block { position: relative; overflow: hidden; }
+  .quote-block {
+    position: relative;
+    overflow: hidden;
+    padding-block: 0;
+  }
+  .quote-block__wave {
+    display: block;
+    line-height: 0;
+    overflow: hidden;
+  }
+  .quote-block__wave svg {
+    display: block;
+    width: 100%;
+    height: clamp(40px, 4vw, 70px);
+  }
+  .quote-block__wave--top { margin-top: -2px; }
+  .quote-block__wave--bottom { margin-bottom: -2px; }
   .quote-block__inner {
     position: relative;
     text-align: center;
-    padding-block: var(--space-4);
+    padding-block: var(--section-pad-y);
   }
   .quote-block__mark {
     display: block;

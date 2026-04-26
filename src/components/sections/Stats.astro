@@ -7,6 +7,11 @@ const STATS = [
 ---
 
 <section class="section stats section--evergreen" aria-labelledby="stats-heading">
+  <div class="stats__wave stats__wave--top" aria-hidden="true">
+    <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path d="M0,30 C240,0 480,60 720,30 C960,0 1200,60 1440,30 L1440,0 L0,0 Z" fill="#e8dfc8"/>
+    </svg>
+  </div>
   <div class="container stats__inner">
     <h2 id="stats-heading" class="sr-only">Our impact by the numbers</h2>
     <ul class="stats__grid" role="list">
@@ -38,22 +43,26 @@ const STATS = [
 <style>
   .stats {
     color: var(--color-cream);
-    padding-block-end: 0; /* wave replaces bottom padding */
+    padding-block: 0;
   }
 
-  .stats__inner { padding-block-end: 75px; }
+  .stats__inner {
+    padding-block-start: var(--space-16);
+    padding-block-end: 75px;
+  }
 
   .stats__wave {
     display: block;
     line-height: 0;
     overflow: hidden;
-    margin-bottom: -2px; /* eliminate subpixel gap between wave and next section */
   }
   .stats__wave svg {
     display: block;
     width: 100%;
     height: clamp(40px, 4vw, 70px);
   }
+  .stats__wave--top { margin-top: -2px; }
+  .stats__wave:not(.stats__wave--top) { margin-bottom: -2px; }
   .stats__grid {
     list-style: none;
     display: grid;

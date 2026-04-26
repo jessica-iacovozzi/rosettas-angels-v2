@@ -1,18 +1,29 @@
 ---
 // Wordmark — display type, two-tone. Click area is the wrapping <a> in Header.
-// Logo image is currently hidden; when re-enabling it, import Image from 'astro:assets'
-// and getImageUrl from '~/lib/cloudinary', then uncomment the <Image> block below.
+
+import { Image } from 'astro:assets';
+import { getImageUrl } from '~/lib/cloudinary'
 ---
+
 <span class="brandmark" aria-label="Rosetta's Angels — home">
-<!--   <Image
-    class="brandmark__logo"
-    src={logoUrl}
-    alt=""
-    width={40}
-    height={40}
+   <Image
+    class="brandmark__logo brandmark__logo--default"
+    src={getImageUrl('logo/svg-logo.svg')}
+    alt="Rosetta's Angels logo"
+    width={100}
+    height={100}
     aria-hidden="true"
     loading="eager"
-  /> -->
+  />
+  <Image
+    class="brandmark__logo brandmark__logo--white"
+    src={getImageUrl('logo/svg-logo-white.svg')}
+    alt="Rosetta's Angels logo"
+    width={100}
+    height={100}
+    aria-hidden="true"
+    loading="eager"
+  />
   <span class="brandmark__text">
     <span class="brandmark__word">Rosetta's</span>
     <span class="brandmark__word brandmark__word--accent">Angels</span>
@@ -28,11 +39,12 @@
     gap: var(--space-2);
   }
   .brandmark__logo {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 5rem;
+    height: 4.5rem;
     object-fit: contain;
     flex-shrink: 0;
   }
+  .brandmark__logo--white { display: none; }
   .brandmark__text {
     font-family: var(--font-display);
     font-weight: 800;
@@ -48,6 +60,10 @@
     color: var(--color-amber);
     margin-inline-start: 0.4em;
   }
-  /* When mark sits on the dark mobile-menu panel */
+  /* White logo on dark backgrounds (footer, is-on-dark header) */
   :global([data-theme='dark']) .brandmark { color: var(--color-cream); }
+  :global([data-theme='dark']) .brandmark__logo--default { display: none; }
+  :global([data-theme='dark']) .brandmark__logo--white { display: block; }
+  :global(.is-on-dark) .brandmark__logo--default { display: none; }
+  :global(.is-on-dark) .brandmark__logo--white { display: block; }
 </style>
