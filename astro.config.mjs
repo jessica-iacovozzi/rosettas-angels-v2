@@ -8,6 +8,11 @@ export default defineConfig({
   site: process.env.SITE_URL || 'https://www.rosettasangels.org',
   output: 'static',
 
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'fr'],
+  },
+
   integrations: [preact(), sitemap()],
   adapter: vercel(),
 

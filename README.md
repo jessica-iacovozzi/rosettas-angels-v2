@@ -48,7 +48,6 @@ to a Google Apps Script Web App that appends a row to the Sheet. See
 ## TODO
 
 - Make testimonials container static height
-- Add french locale
 
 ### After production deployment
 

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { ContactFormData } from '~/types';
-import { validateField } from '~/lib/validation';
+import { isEmail, isPhone } from '~/lib/validation';
 import { executeRecaptcha } from '~/lib/recaptcha-client';
 import { sendEmail, TEMPLATES } from '~/lib/emailjs-client';
+import { useTranslations, t as fmt, type Lang } from '~/i18n';
 
 const RATE_LIMIT_MS = 30_000;
 const STORAGE_KEY = 'lastEmailTime';
@@ -18,7 +19,13 @@ const empty: ContactFormData = {
   honeypot: '',
 };
 
-export default function ContactForm() {
+interface Props {
+  lang?: Lang;
+}
+
+export default function ContactForm({ lang = 'en' }: Props) {
+  const strings = useTranslations(lang).forms.contact;
+
   const [data, setData] = useState<ContactFormData>(empty);
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
@@ -35,15 +42,13 @@ export default function ContactForm() {
 
   function validate(): Errors {
     const e: Errors = {};
-    e.name = validateField(data.name, 'Name', { required: true, maxLength: 50 }) ?? undefined;
-    e.email = validateField(data.email, 'Email', { required: true, type: 'email' }) ?? undefined;
-    if (data.phone)
-      e.phone = validateField(data.phone, 'Phone', { type: 'phone', minLength: 10, maxLength: 20 }) ?? undefined;
-    e.subject = validateField(data.subject, 'Subject', { required: true }) ?? undefined;
-    e.message = validateField(data.message, 'Message', { required: true }) ?? undefined;
-    Object.keys(e).forEach((k) => {
-      if (!e[k as keyof Errors]) delete e[k as keyof Errors];
-    });
+    if (!data.name.trim()) e.name = strings.vNameRequired;
+    else if (data.name.trim().length > 50) e.name = strings.vNameTooLong;
+    if (!data.email.trim()) e.email = strings.vEmailRequired;
+    else if (!isEmail(data.email)) e.email = strings.vEmailInvalid;
+    if (data.phone && !isPhone(data.phone)) e.phone = strings.vPhoneInvalid;
+    if (!data.subject.trim()) e.subject = strings.vSubjectRequired;
+    if (!data.message.trim()) e.message = strings.vMessageRequired;
     return e;
   }
 
@@ -56,21 +61,20 @@ export default function ContactForm() {
     const wait = RATE_LIMIT_MS - (Date.now() - last);
     if (wait > 0) {
       const seconds = Math.ceil(wait / 1000);
-      setToast({ type: 'error', message: `Please wait ${seconds}s before sending another message.` });
+      setToast({ type: 'error', message: fmt(strings.errorRateLimit, { s: seconds }) });
       return;
     }
 
     // Honeypot — silent fake-success
     if (data.honeypot) {
       setData(empty);
-      setToast({ type: 'success', message: 'Message sent successfully! We will get back to you soon.' });
+      setToast({ type: 'success', message: strings.successMsg });
       return;
     }
 
     const e2 = validate();
     setErrors(e2);
     if (Object.keys(e2).length > 0) {
-      // Focus first invalid
       const firstKey = Object.keys(e2)[0];
       document.getElementById(`contact-${firstKey}`)?.focus();
       return;
@@ -80,7 +84,6 @@ export default function ContactForm() {
     try {
       const token = await executeRecaptcha('contact_submit').catch(() => '');
 
-      // Verify reCAPTCHA + validate server-side before sending email
       const verifyRes = await fetch('/api/contact-submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -98,7 +101,6 @@ export default function ContactForm() {
         throw new Error(verifyJson.message || `Server returned ${verifyRes.status}`);
       }
 
-      // Server approved — now send via EmailJS
       await sendEmail({
         templateId: TEMPLATES.contact,
         params: {
@@ -112,10 +114,10 @@ export default function ContactForm() {
 
       localStorage.setItem(STORAGE_KEY, String(Date.now()));
       setData({ ...empty });
-      setToast({ type: 'success', message: 'Message sent successfully! We will get back to you soon.' });
+      setToast({ type: 'success', message: strings.successMsg });
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
-      setToast({ type: 'error', message: `Failed to send message. Please try again later. (${msg})` });
+      setToast({ type: 'error', message: fmt(strings.errorFail, { msg }) });
     } finally {
       setSubmitting(false);
     }
@@ -125,18 +127,18 @@ export default function ContactForm() {
   useEffect(() => {
     if (!toast) return;
     if (liveRegion.current) liveRegion.current.textContent = toast.message;
-    const t = setTimeout(() => setToast(null), 7000);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setToast(null), 7000);
+    return () => clearTimeout(timer);
   }, [toast]);
 
   const f = useMemo(
     () => ({
-      name: { id: 'contact-name', label: 'Name', value: data.name, required: true, max: 50, type: 'text' as const, autocomplete: 'name' as const },
-      email: { id: 'contact-email', label: 'Email', value: data.email, required: true, max: 80, type: 'email' as const, autocomplete: 'email' as const },
-      phone: { id: 'contact-phone', label: 'Phone', value: data.phone, required: false, max: 20, type: 'tel' as const, autocomplete: 'tel' as const },
-      subject: { id: 'contact-subject', label: 'Subject', value: data.subject, required: true, max: 120, type: 'text' as const, autocomplete: 'off' as const },
+      name:    { id: 'contact-name',    label: strings.labelName,    value: data.name,    required: true,  max: 50,  type: 'text' as const,  autocomplete: 'name' as const },
+      email:   { id: 'contact-email',   label: strings.labelEmail,   value: data.email,   required: true,  max: 80,  type: 'email' as const, autocomplete: 'email' as const },
+      phone:   { id: 'contact-phone',   label: strings.labelPhone,   value: data.phone,   required: false, max: 20,  type: 'tel' as const,   autocomplete: 'tel' as const },
+      subject: { id: 'contact-subject', label: strings.labelSubject, value: data.subject, required: true,  max: 120, type: 'text' as const,  autocomplete: 'off' as const },
     }),
-    [data]
+    [data, strings]
   );
 
   return (
@@ -146,7 +148,7 @@ export default function ContactForm() {
           <div class="field" key={k}>
             <label class="field__label" for={f[k].id}>
               {f[k].label} {f[k].required && <span class="required" aria-hidden="true">*</span>}
-              {f[k].required && <span class="sr-only">required</span>}
+              {f[k].required && <span class="sr-only">{strings.required}</span>}
             </label>
             <input
               id={f[k].id}
@@ -171,8 +173,8 @@ export default function ContactForm() {
           <div class="field" key={k}>
             <label class="field__label" for={f[k].id}>
               {f[k].label}
-              {!f[k].required && <span class="field__hint" style={{ marginInlineStart: 6 }}>(optional)</span>}
-              {f[k].required && (<><span class="required" aria-hidden="true">*</span><span class="sr-only">required</span></>)}
+              {!f[k].required && <span class="field__hint" style={{ marginInlineStart: 6 }}>{strings.optional}</span>}
+              {f[k].required && (<><span class="required" aria-hidden="true">*</span><span class="sr-only">{strings.required}</span></>)}
             </label>
             <input
               id={f[k].id}
@@ -194,8 +196,8 @@ export default function ContactForm() {
 
       <div class="field">
         <label class="field__label" for="contact-message">
-          Message <span class="required" aria-hidden="true">*</span>
-          <span class="sr-only">required</span>
+          {strings.labelMessage} <span class="required" aria-hidden="true">*</span>
+          <span class="sr-only">{strings.required}</span>
         </label>
         <textarea
           id="contact-message"
@@ -221,11 +223,9 @@ export default function ContactForm() {
 
       <div class="contact-form__actions">
         <button type="submit" class="btn btn--primary btn--lg" disabled={submitting}>
-          {submitting ? 'Sending…' : 'Send Message'}
+          {submitting ? strings.sending : strings.sendButton}
         </button>
-        <p class="contact-form__legal">
-          Protected by reCAPTCHA. By sending you agree to our use of your contact details to reply.
-        </p>
+        <p class="contact-form__legal">{strings.legal}</p>
       </div>
 
       <div ref={liveRegion} class="sr-only" role="status" aria-live="polite" />
@@ -237,9 +237,9 @@ export default function ContactForm() {
             type="button"
             class="snackbar__close"
             onClick={() => setToast(null)}
-            aria-label="Dismiss notification"
+            aria-label={strings.dismiss}
           >
-            Dismiss
+            {strings.dismiss}
           </button>
         </div>
       )}

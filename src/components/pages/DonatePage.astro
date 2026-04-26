@@ -1,0 +1,106 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import DonorboxEmbed from '~/components/donation/DonorboxEmbed.astro';
+import { getLang, useTranslations } from '~/i18n';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang).donate;
+---
+
+<BaseLayout
+  title={t.pageTitle}
+  description={t.metaDesc}
+  preconnectDonorbox={true}
+>
+  <section class="section donate-banner section--evergreen" aria-labelledby="donate-banner">
+    <div class="container donate-banner__inner">
+      <p class="eyebrow donate-banner__eyebrow">{t.heroEyebrow}</p>
+      <h1 id="donate-banner" class="display-lg donate-banner__heading">
+        {t.heroHeading.before}<span class="underline-mark">{t.heroHeading.accent}</span>{t.heroHeading.after}
+      </h1>
+      <p class="donate-banner__lede">{t.heroLede}</p>
+    </div>
+  </section>
+
+  <section class="section donate-grid">
+    <div class="container donate-grid__inner">
+      <div class="donate-grid__copy">
+        <h2 class="display donate-grid__heading">{t.gridHeading}</h2>
+
+        <article class="donate-method">
+          <h3 class="donate-method__title display">{t.method1Title}</h3>
+          <p class="donate-method__body">{t.method1Body}</p>
+          <p class="donate-method__note">{t.method1Note}</p>
+        </article>
+
+        <article class="donate-method">
+          <h3 class="donate-method__title display">{t.method2Title}</h3>
+          <p class="donate-method__body">
+            {t.method2Body}
+            <a href="mailto:info@rosettasangels.org">info@rosettasangels.org</a>
+            {t.method2BodyAfter}
+          </p>
+        </article>
+
+        <p class="donate-grid__thanks">{t.thanks}</p>
+      </div>
+
+      <aside class="donate-grid__widget" aria-labelledby="online-donate-heading">
+        <h2 id="online-donate-heading" class="sr-only">{t.srForm}</h2>
+        <DonorboxEmbed />
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .donate-banner__inner { text-align: center; max-width: 48rem; margin-inline: auto; }
+  .donate-banner__eyebrow { color: var(--color-amber); }
+  .donate-banner__heading { color: var(--color-cream); margin-block: var(--space-4) var(--space-5); }
+  .donate-banner__lede {
+    color: var(--color-on-dark-soft);
+    font-size: var(--fs-md);
+    line-height: var(--lh-relaxed);
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+
+  .donate-grid__inner {
+    display: grid;
+    gap: var(--space-12);
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  @media (min-width: 1024px) {
+    .donate-grid__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      gap: var(--space-16);
+    }
+  }
+
+  .donate-grid__heading { color: var(--color-evergreen); margin-block-end: var(--space-8); }
+  .donate-method {
+    background: var(--color-cream-200);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+    margin-block-end: var(--space-6);
+    border-left: 4px solid var(--color-amber);
+  }
+  .donate-method__title { color: var(--color-evergreen); font-size: var(--fs-xl); margin-block-end: var(--space-3); }
+  .donate-method__body { color: var(--color-ink-soft); line-height: var(--lh-relaxed); }
+  .donate-method__note {
+    margin-block-start: var(--space-4);
+    font-size: var(--fs-sm);
+    color: var(--color-ink-muted);
+    border-block-start: 1px dashed var(--color-border);
+    padding-block-start: var(--space-3);
+  }
+  .donate-grid__thanks {
+    color: var(--color-ink-soft);
+    font-family: var(--font-italic);
+    font-style: italic;
+    line-height: var(--lh-relaxed);
+    font-size: var(--fs-md);
+    margin-block-start: var(--space-8);
+  }
+</style>

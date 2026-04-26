@@ -2,12 +2,20 @@
 import HeroVideoTile from '~/islands/HeroVideoTile.tsx';
 import { getVideoUrl, getVideoThumbnail } from '~/lib/cloudinary';
 import { HOME_BANNER_VIDEO_ID, FEATURE_VIDEO_ID } from '~/lib/gallery-assets';
+import { getLang, useTranslations } from '~/i18n';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
 
 const bannerVideoUrl = getVideoUrl(HOME_BANNER_VIDEO_ID, 1920);
 const bannerPoster = getVideoThumbnail(HOME_BANNER_VIDEO_ID, 2, 1920);
 
 const featureVideoUrl = getVideoUrl(FEATURE_VIDEO_ID, 1280);
 const featurePoster = getVideoThumbnail(FEATURE_VIDEO_ID, 39, 720);
+
+const donateHref    = getRelativeLocaleUrl(lang, 'donate');
+const volunteerHref = getRelativeLocaleUrl(lang, 'volunteer');
 ---
 
 <section class="hero" aria-label="Welcome" data-dark-hero>
@@ -30,30 +38,26 @@ const featurePoster = getVideoThumbnail(FEATURE_VIDEO_ID, 39, 720);
 
   <div class="hero__inner container--wide">
     <div class="hero__content">
-      <p class="eyebrow hero__eyebrow">Montreal · Holiday Basket Brigade</p>
+      <p class="eyebrow hero__eyebrow">{t.hero.eyebrow}</p>
       <h1 class="display-xl hero__heading">
-        We bring <span class="underline-mark">joy</span><br />
-        to families<br />
-        in&nbsp;need.
+        {t.hero.headingBefore}<span class="underline-mark">{t.hero.headingAccent}</span><br />
+        {t.hero.headingLine2}<br />
+        {t.hero.headingLine3}
       </h1>
-      <p class="hero__sub">
-        Carrying on Rosetta's legacy — every December, our volunteers pack and
-        deliver baskets full of food, gifts, and warmth to Montreal families
-        facing hardship.
-      </p>
+      <p class="hero__sub">{t.hero.sub}</p>
 
       <div class="hero__ctas">
-        <a href="/donate" class="btn btn--primary btn--lg">Donate Now</a>
-        <a href="/volunteer" class="btn btn--secondary btn--on-dark btn--lg">Volunteer</a>
+        <a href={donateHref} class="btn btn--primary btn--lg">{t.hero.ctaDonate}</a>
+        <a href={volunteerHref} class="btn btn--secondary btn--on-dark btn--lg">{t.hero.ctaVolunteer}</a>
       </div>
     </div>
 
-    <aside class="hero__tile-wrap" aria-label="Featured video">
+    <aside class="hero__tile-wrap" aria-label={t.hero.videoAria}>
       <HeroVideoTile
         client:idle
         videoUrl={featureVideoUrl}
         posterUrl={featurePoster}
-        label="Watch our 2025 holiday delivery story"
+        label={t.hero.videoLabel}
       />
     </aside>
   </div>

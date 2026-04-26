@@ -1,0 +1,39 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import { getLang, useTranslations } from '~/i18n';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const lang = getLang(Astro.currentLocale);
+const tn = useTranslations(lang).notFound;
+
+const homeHref   = getRelativeLocaleUrl(lang, '');
+const donateHref = getRelativeLocaleUrl(lang, 'donate');
+---
+
+<BaseLayout title={tn.pageTitle} description={tn.metaDesc}>
+  <section class="section not-found">
+    <div class="container--narrow not-found__inner">
+      <p class="not-found__code display-xl">404</p>
+      <h1 class="display not-found__heading">
+        {tn.heading.before}<span class="underline-mark">{tn.heading.accent}</span>{tn.heading.after}
+      </h1>
+      <p class="lede">{tn.lede}</p>
+      <div class="not-found__actions">
+        <a href={homeHref} class="btn btn--primary btn--lg">{tn.home}</a>
+        <a href={donateHref} class="btn btn--secondary btn--lg">{tn.donate}</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found { text-align: center; }
+  .not-found__inner { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); }
+  .not-found__code {
+    color: var(--color-amber);
+    line-height: 0.85;
+    font-size: clamp(6rem, 4rem + 8vw, 12rem);
+  }
+  .not-found__heading { color: var(--color-evergreen); margin-block-end: var(--space-4); }
+  .not-found__actions { display: flex; gap: var(--space-4); flex-wrap: wrap; justify-content: center; margin-block-start: var(--space-4); }
+</style>

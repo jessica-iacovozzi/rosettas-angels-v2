@@ -1,25 +1,27 @@
 ---
 import ContactForm from '~/islands/ContactForm.tsx';
+import { getLang, useTranslations } from '~/i18n';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
 ---
 
 <section id="contactForm" class="section home-contact" aria-labelledby="contact-heading">
   <div class="container home-contact__inner">
     <header class="home-contact__header reveal">
-      <p class="eyebrow">Get in Touch</p>
+      <p class="eyebrow">{t.contact.eyebrow}</p>
       <h2 id="contact-heading" class="display home-contact__heading">
-        Have a question? <span class="underline-mark">Write us</span>.
+        {t.contact.heading.before}<span class="underline-mark">{t.contact.heading.accent}</span>{t.contact.heading.after}
       </h2>
-      <p class="lede">
-        Have questions about our holiday basket initiative or want to make a difference?
-      </p>
+      <p class="lede">{t.contact.lede}</p>
       <p class="home-contact__direct">
-        Or email us directly at
+        {t.contact.direct}
         <a href="mailto:info@rosettasangels.org">info@rosettasangels.org</a>.
       </p>
     </header>
 
     <div class="home-contact__form reveal">
-      <ContactForm client:visible />
+      <ContactForm client:visible lang={lang} />
     </div>
   </div>
 </section>

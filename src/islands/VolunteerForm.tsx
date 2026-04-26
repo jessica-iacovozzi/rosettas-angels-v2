@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { VolunteerFormData, ApiResponse } from '~/types';
-import { validateField } from '~/lib/validation';
+import { isEmail, isPhone } from '~/lib/validation';
 import { executeRecaptcha } from '~/lib/recaptcha-client';
 import { sendEmail, TEMPLATES } from '~/lib/emailjs-client';
+import { useTranslations, t as fmt, type Lang } from '~/i18n';
 
 const empty: VolunteerFormData = {
   name: '',
@@ -21,7 +22,13 @@ function isoToday(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-export default function VolunteerForm() {
+interface Props {
+  lang?: Lang;
+}
+
+export default function VolunteerForm({ lang = 'en' }: Props) {
+  const strings = useTranslations(lang).forms.volunteer;
+
   const [data, setData] = useState<VolunteerFormData>(empty);
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
@@ -31,10 +38,10 @@ export default function VolunteerForm() {
 
   // Auto-grow textarea for additionalNames
   useEffect(() => {
-    const t = additionalRef.current;
-    if (!t) return;
-    t.style.height = 'auto';
-    t.style.height = `${Math.min(t.scrollHeight, 320)}px`;
+    const ta = additionalRef.current;
+    if (!ta) return;
+    ta.style.height = 'auto';
+    ta.style.height = `${Math.min(ta.scrollHeight, 320)}px`;
   }, [data.additionalNames]);
 
   const update =
@@ -47,13 +54,12 @@ export default function VolunteerForm() {
 
   function validate(): Errors {
     const e: Errors = {};
-    e.name = validateField(data.name, 'Name', { required: true, maxLength: 80 }) ?? undefined;
-    e.email = validateField(data.email, 'Email', { required: true, type: 'email' }) ?? undefined;
-    e.phone = validateField(data.phone, 'Phone', { required: true, type: 'phone', minLength: 10, maxLength: 20 }) ?? undefined;
-    if (!data.delivery) e.delivery = 'Please select an answer';
-    Object.keys(e).forEach((k) => {
-      if (!e[k as keyof Errors]) delete e[k as keyof Errors];
-    });
+    if (!data.name.trim()) e.name = strings.vNameRequired;
+    if (!data.email.trim()) e.email = strings.vEmailRequired;
+    else if (!isEmail(data.email)) e.email = strings.vEmailInvalid;
+    if (!data.phone.trim()) e.phone = strings.vPhoneRequired;
+    else if (!isPhone(data.phone)) e.phone = strings.vPhoneInvalid;
+    if (!data.delivery) e.delivery = strings.vDeliveryRequired;
     return e;
   }
 
@@ -62,9 +68,8 @@ export default function VolunteerForm() {
     if (submitting) return;
 
     if (data.honeypot) {
-      // Silent fake-success per spec
       setData({ ...empty });
-      setToast({ type: 'success', message: 'Application submitted successfully! We will contact you soon.' });
+      setToast({ type: 'success', message: strings.successMsg });
       return;
     }
 
@@ -80,7 +85,6 @@ export default function VolunteerForm() {
     try {
       const token = await executeRecaptcha('volunteer_submit').catch(() => '');
 
-      // 1) EmailJS — notification email
       await sendEmail({
         templateId: TEMPLATES.volunteer,
         params: {
@@ -94,8 +98,6 @@ export default function VolunteerForm() {
         },
       });
 
-      // 2) Apps Script webhook (via our own server proxy so the script's
-      //    shared secret never appears in the bundle).
       const res = await fetch('/api/volunteer-submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -116,10 +118,10 @@ export default function VolunteerForm() {
       }
 
       setData({ ...empty });
-      setToast({ type: 'success', message: 'Application submitted successfully! We will contact you soon.' });
+      setToast({ type: 'success', message: strings.successMsg });
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
-      setToast({ type: 'error', message: `Failed to submit application. Please try again later. (${msg})` });
+      setToast({ type: 'error', message: fmt(strings.errorFail, { msg }) });
     } finally {
       setSubmitting(false);
     }
@@ -128,8 +130,8 @@ export default function VolunteerForm() {
   useEffect(() => {
     if (!toast) return;
     if (liveRef.current) liveRef.current.textContent = toast.message;
-    const t = setTimeout(() => setToast(null), 8000);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setToast(null), 8000);
+    return () => clearTimeout(timer);
   }, [toast]);
 
   return (
@@ -137,7 +139,8 @@ export default function VolunteerForm() {
       <div class="volunteer-form__row">
         <div class="field">
           <label class="field__label" for="vol-name">
-            Name <span class="required" aria-hidden="true">*</span><span class="sr-only">required</span>
+            {strings.labelName} <span class="required" aria-hidden="true">*</span>
+            <span class="sr-only">{strings.required}</span>
           </label>
           <input
             id="vol-name"
@@ -157,7 +160,8 @@ export default function VolunteerForm() {
 
         <div class="field">
           <label class="field__label" for="vol-email">
-            Email <span class="required" aria-hidden="true">*</span><span class="sr-only">required</span>
+            {strings.labelEmail} <span class="required" aria-hidden="true">*</span>
+            <span class="sr-only">{strings.required}</span>
           </label>
           <input
             id="vol-email"
@@ -177,7 +181,8 @@ export default function VolunteerForm() {
 
       <div class="field">
         <label class="field__label" for="vol-phone">
-          Phone <span class="required" aria-hidden="true">*</span><span class="sr-only">required</span>
+          {strings.labelPhone} <span class="required" aria-hidden="true">*</span>
+          <span class="sr-only">{strings.required}</span>
         </label>
         <input
           id="vol-phone"
@@ -193,14 +198,16 @@ export default function VolunteerForm() {
           aria-describedby={errors.phone ? 'vol-phone-err' : 'vol-phone-hint'}
           onInput={update('phone')}
         />
-        <p class="field__hint" id="vol-phone-hint">We'll only use your phone for time-sensitive coordination on event day.</p>
+        <p class="field__hint" id="vol-phone-hint">{strings.phoneHint}</p>
         {errors.phone && <p class="field__error" id="vol-phone-err">{errors.phone}</p>}
       </div>
 
       <div class="field">
         <label class="field__label" for="vol-additional">
-          Names of additional volunteers
-          <span class="field__hint" style={{ marginInlineStart: 6 }}>(optional)</span>
+          {strings.labelAdditional}
+          <span class="field__hint" style={{ marginInlineStart: 6 }}>
+            {strings.optional}
+          </span>
         </label>
         <textarea
           id="vol-additional"
@@ -212,15 +219,13 @@ export default function VolunteerForm() {
           aria-describedby="vol-additional-hint"
           onInput={update('additionalNames')}
         />
-        <p class="field__hint" id="vol-additional-hint">
-          If you are volunteering with others, please have them complete the form
-          or list their names here.
-        </p>
+        <p class="field__hint" id="vol-additional-hint">{strings.additionalHint}</p>
       </div>
 
       <div class="field">
         <label class="field__label" for="vol-delivery">
-          Would you like to deliver? <span class="required" aria-hidden="true">*</span><span class="sr-only">required</span>
+          {strings.labelDelivery} <span class="required" aria-hidden="true">*</span>
+          <span class="sr-only">{strings.required}</span>
         </label>
         <select
           id="vol-delivery"
@@ -232,22 +237,21 @@ export default function VolunteerForm() {
           aria-describedby={errors.delivery ? 'vol-delivery-err' : 'vol-delivery-hint'}
           onChange={update('delivery')}
         >
-          <option value="">Select an answer</option>
-          <option value="Yes">Yes, please!</option>
-          <option value="No">No, I won't be able to.</option>
-          <option value="Maybe">Maybe, I'll let you know.</option>
+          <option value="">{strings.deliveryPlaceholder}</option>
+          <option value="Yes">{strings.deliveryYes}</option>
+          <option value="No">{strings.deliveryNo}</option>
+          <option value="Maybe">{strings.deliveryMaybe}</option>
         </select>
-        <p class="field__hint" id="vol-delivery-hint">
-          Delivery is our most popular task. If you choose to deliver, you'll be
-          briefed on our protocol about an hour before the event.
-        </p>
+        <p class="field__hint" id="vol-delivery-hint">{strings.deliveryHint}</p>
         {errors.delivery && <p class="field__error" id="vol-delivery-err">{errors.delivery}</p>}
       </div>
 
       <div class="field">
         <label class="field__label" for="vol-comments">
-          Comments
-          <span class="field__hint" style={{ marginInlineStart: 6 }}>(optional)</span>
+          {strings.labelComments}
+          <span class="field__hint" style={{ marginInlineStart: 6 }}>
+            {strings.optional}
+          </span>
         </label>
         <textarea
           id="vol-comments"
@@ -258,9 +262,7 @@ export default function VolunteerForm() {
           aria-describedby="vol-comments-hint"
           onInput={update('comments')}
         />
-        <p class="field__hint" id="vol-comments-hint">
-          Feel free to share any additional information or questions you may have.
-        </p>
+        <p class="field__hint" id="vol-comments-hint">{strings.commentsHint}</p>
       </div>
 
       <div class="honeypot" aria-hidden="true">
@@ -272,10 +274,10 @@ export default function VolunteerForm() {
 
       <div class="volunteer-form__actions">
         <button type="submit" class="btn btn--primary btn--lg" disabled={submitting}>
-          {submitting ? 'Submitting…' : 'Submit Application'}
+          {submitting ? strings.submitting : strings.submitButton}
         </button>
         <p class="volunteer-form__legal">
-          Protected by reCAPTCHA. Questions?{' '}
+          {strings.legal}{' '}
           <a href="mailto:info@rosettasangels.org">info@rosettasangels.org</a>
         </p>
       </div>
@@ -289,9 +291,9 @@ export default function VolunteerForm() {
             type="button"
             class="snackbar__close"
             onClick={() => setToast(null)}
-            aria-label="Dismiss notification"
+            aria-label={strings.dismiss}
           >
-            Dismiss
+            {strings.dismiss}
           </button>
         </div>
       )}

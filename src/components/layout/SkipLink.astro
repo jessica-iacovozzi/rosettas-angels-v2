@@ -1,4 +1,6 @@
 ---
+import { getLang, useTranslations } from '~/i18n';
 const { href = '#main' } = Astro.props;
+const t = useTranslations(getLang(Astro.currentLocale));
 ---
-<a class="skip-link" href={href}>Skip to main content</a>
+<a class="skip-link" href={href}>{t.skip}</a>

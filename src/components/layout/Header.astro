@@ -1,26 +1,45 @@
 ---
 import BrandMark from './BrandMark.astro';
 import MobileMenu from '~/islands/MobileMenu.tsx';
+import { getLang, useTranslations } from '~/i18n';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+
+// Build locale-aware nav hrefs
+const homeHref     = getRelativeLocaleUrl(lang, '');
+const galleryHref  = getRelativeLocaleUrl(lang, 'gallery');
+const teamHref     = getRelativeLocaleUrl(lang, 'team');
+const volunteerHref = getRelativeLocaleUrl(lang, 'volunteer');
+const donateHref   = getRelativeLocaleUrl(lang, 'donate');
 
 const NAV = [
-  { label: 'Home', href: '/' },
-  { label: 'Gallery', href: '/gallery' },
-  { label: 'Team', href: '/team' },
-  { label: 'Volunteer', href: '/volunteer' },
+  { label: t.nav.home,      href: homeHref },
+  { label: t.nav.gallery,   href: galleryHref },
+  { label: t.nav.team,      href: teamHref },
+  { label: t.nav.volunteer, href: volunteerHref },
 ];
+
+// Language-switcher: swap locale while keeping the same page
+const rawPath = Astro.url.pathname;
+const pageSlug = lang === 'fr'
+  ? rawPath.replace(/^\/fr\/?/, '') || ''
+  : rawPath.replace(/^\//, '') || '';
+const alternateUrl = getRelativeLocaleUrl(t.nav.langSwitchLocale, pageSlug);
 
 const currentPath = Astro.url.pathname;
 const isActive = (href: string) =>
-  href === '/' ? currentPath === '/' : currentPath.startsWith(href);
+  href === homeHref ? currentPath === homeHref : currentPath.startsWith(href);
 ---
 
 <header class="site-header" role="banner">
   <div class="site-header__inner container--wide">
-    <a class="site-header__brand" href="/" aria-label="Rosetta's Angels — home">
+    <a class="site-header__brand" href={homeHref} aria-label="Rosetta's Angels — home">
       <BrandMark />
     </a>
 
-    <nav class="site-header__nav" aria-label="Primary">
+    <nav class="site-header__nav" aria-label={t.nav.primaryLabel}>
       <ul class="site-header__list">
         {NAV.map((item) => (
           <li>
@@ -38,14 +57,30 @@ const isActive = (href: string) =>
 
     <div class="site-header__cta-group">
       <a
-        href="/donate"
-        class:list={["btn btn--primary", isActive('/donate') && "is-active"]}
-        aria-current={isActive('/donate') ? 'page' : undefined}
+        href={donateHref}
+        class:list={["btn btn--primary", isActive(donateHref) && "is-active"]}
+        aria-current={isActive(donateHref) ? 'page' : undefined}
       >
-        Donate
+        {t.nav.donate}
+      </a>
+      <a
+        href={alternateUrl}
+        class="site-header__lang-switch"
+        aria-label={`Switch to ${t.nav.langSwitch}`}
+        hreflang={t.nav.langSwitchLocale}
+      >
+        {t.nav.langSwitch}
       </a>
       <div class="site-header__menu-trigger">
-        <MobileMenu client:load items={NAV} currentPath={currentPath} />
+        <MobileMenu
+          client:load
+          items={NAV}
+          currentPath={currentPath}
+          donateHref={donateHref}
+          donateLabel={t.nav.donate}
+          lang={lang}
+          altHref={alternateUrl}
+        />
       </div>
     </div>
   </div>
@@ -119,11 +154,37 @@ const isActive = (href: string) =>
   }
   .site-header__link:hover { color: var(--color-amber-600); }
 
+  /* Language switch pill */
+  .site-header__lang-switch {
+    display: none;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-evergreen);
+    text-decoration: none;
+    border: 1.5px solid currentColor;
+    border-radius: var(--radius-pill);
+    padding: var(--space-1) var(--space-3);
+    transition: color var(--duration-fast) var(--ease-out),
+                border-color var(--duration-fast) var(--ease-out);
+  }
+  .site-header__lang-switch:hover {
+    color: var(--color-amber-600);
+    border-color: var(--color-amber-600);
+  }
+  @media (min-width: 1024px) {
+    .site-header__lang-switch { display: inline-flex; align-items: center; }
+  }
+
   /* Transparent + dark-hero variant: flip text to cream */
   :global(.site-header.is-on-dark .site-header__brand) { color: var(--color-cream); }
   :global(.site-header.is-on-dark .site-header__link) { color: var(--color-cream); }
   :global(.site-header.is-on-dark .site-header__link:hover) { color: var(--color-amber); }
   :global(.site-header.is-on-dark .mobile-menu__trigger) { color: var(--color-cream); }
+  :global(.site-header.is-on-dark .site-header__lang-switch) { color: var(--color-cream); border-color: var(--color-cream); }
+  :global(.site-header.is-on-dark .site-header__lang-switch:hover) { color: var(--color-amber); border-color: var(--color-amber); }
   .site-header__link.is-active::after {
     content: '';
     position: absolute;
@@ -215,6 +276,20 @@ const isActive = (href: string) =>
     text-decoration-thickness: 0.12em;
   }
   :global(.mobile-menu__cta) { width: 100%; }
+  :global(.mobile-menu__lang) {
+    align-self: flex-start;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--fs-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-on-dark-soft);
+    text-decoration: none;
+    border: 1.5px solid var(--color-on-dark-soft);
+    border-radius: var(--radius-pill);
+    padding: var(--space-1) var(--space-3);
+  }
+  :global(.mobile-menu__lang:hover) { color: var(--color-amber); border-color: var(--color-amber); }
 
   @keyframes fade-in {
     from { opacity: 0; }

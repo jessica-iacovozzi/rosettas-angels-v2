@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
+import type { Lang } from '~/i18n';
 
 interface NavItem {
   label: string;
@@ -8,6 +9,10 @@ interface NavItem {
 interface Props {
   items: NavItem[];
   currentPath: string;
+  donateHref: string;
+  donateLabel: string;
+  lang: Lang;
+  altHref: string;
 }
 
 /**
@@ -15,11 +20,20 @@ interface Props {
  * Trigger button is rendered here so it lives next to the panel and can
  * coordinate aria-controls / aria-expanded without prop drilling.
  */
-export default function MobileMenu({ items, currentPath }: Props) {
+export default function MobileMenu({ items, currentPath, donateHref, donateLabel, lang, altHref }: Props) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
+
+  const openLabel  = lang === 'fr' ? 'Ouvrir le menu' : 'Open menu';
+  const closeLabel = lang === 'fr' ? 'Fermer le menu' : 'Close menu';
+  const siteNavLabel    = lang === 'fr' ? 'Navigation du site' : 'Site navigation';
+  const mobilePrimLabel = lang === 'fr' ? 'Navigation mobile principale' : 'Mobile primary';
+
+  // Alternate locale link shown in mobile panel
+  const altLang  = lang === 'fr' ? 'en' : 'fr';
+  const altLabel = lang === 'fr' ? 'English' : 'Français';
 
   useEffect(() => {
     if (!open) return;
@@ -64,7 +78,7 @@ export default function MobileMenu({ items, currentPath }: Props) {
         class={`mobile-menu__trigger${open ? ' is-open' : ''}`}
         aria-controls="mobile-menu-panel"
         aria-expanded={open}
-        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-label={open ? closeLabel : openLabel}
         onClick={() => setOpen((v) => !v)}
       >
         <svg
@@ -103,15 +117,15 @@ export default function MobileMenu({ items, currentPath }: Props) {
         class={`mobile-menu__panel ${open ? 'is-open' : ''}`}
         role="dialog"
         aria-modal="true"
-        aria-label="Site navigation"
+        aria-label={siteNavLabel}
         data-theme="dark"
       >
-        <nav aria-label="Mobile primary">
+        <nav aria-label={mobilePrimLabel}>
           <ul class="mobile-menu__list">
             {items.map((item, idx) => {
               const active =
-                item.href === '/'
-                  ? currentPath === '/'
+                item.href === '/' || item.href === '/fr/'
+                  ? currentPath === item.href
                   : currentPath.startsWith(item.href);
               return (
                 <li>
@@ -129,8 +143,11 @@ export default function MobileMenu({ items, currentPath }: Props) {
             })}
           </ul>
         </nav>
-        <a class="btn btn--primary btn--lg mobile-menu__cta" href="/donate">
-          Donate
+        <a class="btn btn--primary btn--lg mobile-menu__cta" href={donateHref}>
+          {donateLabel}
+        </a>
+        <a class="mobile-menu__lang" href={altHref} hreflang={altLang}>
+          {altLabel}
         </a>
       </div>
     </>

@@ -1,0 +1,81 @@
+---
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import HomeHero from '~/components/sections/HomeHero.astro';
+import StoryMission from '~/components/sections/StoryMission.astro';
+import QuoteBlock from '~/components/sections/QuoteBlock.astro';
+import HowWeHelp from '~/components/sections/HowWeHelp.astro';
+import Stats from '~/components/sections/Stats.astro';
+import GetInvolved from '~/components/sections/GetInvolved.astro';
+import HomeContact from '~/components/sections/HomeContact.astro';
+import { getLang, useTranslations } from '~/i18n';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'NGO',
+  name: "Rosetta's Angels",
+  url: 'https://www.rosettasangels.org',
+  description:
+    lang === 'fr'
+      ? "Organisme sans but lucratif montréalais apportant la joie des fêtes aux familles dans le besoin grâce à une brigade annuelle de paniers."
+      : "Montreal-based nonprofit bringing holiday joy to families in need through an annual basket brigade.",
+  email: 'info@rosettasangels.org',
+};
+---
+
+<BaseLayout
+  title={lang === 'fr' ? "Les Anges de Rosetta | Brigade de paniers des fêtes à Montréal" : "Rosetta's Angels | Montreal Holiday Basket Brigade"}
+  description={lang === 'fr'
+    ? "Les Anges de Rosetta est un organisme sans but lucratif montréalais qui apporte la joie des fêtes aux familles dans le besoin — livrant nourriture, cadeaux et chaleur grâce à notre brigade annuelle de paniers chaque décembre."
+    : "Rosetta's Angels is a Montreal-based non-profit bringing holiday joy to families in need — delivering food, gifts, and warmth through our annual basket brigade every December."}
+  footerWaveBgColor="var(--color-cream-200)"
+>
+  <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(orgSchema)} />
+  <HomeHero />
+  <StoryMission />
+  <QuoteBlock
+    quote={t.quote.text}
+    attribution={t.quote.attribution}
+    attributionRole={t.quote.attributionRole}
+  />
+  <HowWeHelp />
+  <Stats />
+  <GetInvolved />
+  <HomeContact />
+</BaseLayout>
+
+<script>
+  // Hash-targeted smooth scroll with responsive offset
+  // Spec: 20px mobile, 100px tablet, 150px desktop, 300ms delay
+  function offset() {
+    const w = window.innerWidth;
+    if (w >= 1024) return 150;
+    if (w >= 768) return 100;
+    return 20;
+  }
+  function scrollToHash(hash: string) {
+    const target = document.querySelector(hash);
+    if (!target) return;
+    const y = target.getBoundingClientRect().top + window.scrollY - offset();
+    window.scrollTo({
+      top: y,
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    });
+  }
+  if (window.location.hash) {
+    setTimeout(() => scrollToHash(window.location.hash), 300);
+  }
+  document.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
+    if (!a) return;
+    const hash = a.getAttribute('href');
+    if (!hash || hash === '#') return;
+    if (document.querySelector(hash)) {
+      e.preventDefault();
+      history.replaceState(null, '', hash);
+      setTimeout(() => scrollToHash(hash), 0);
+    }
+  });
+</script>

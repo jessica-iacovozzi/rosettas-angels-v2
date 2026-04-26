@@ -1,0 +1,133 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import TestimonialsCarousel from '~/islands/TestimonialsCarousel.tsx';
+import { getImageUrl } from '~/lib/cloudinary';
+import { getLang, useTranslations } from '~/i18n';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const lang = getLang(Astro.currentLocale);
+const tt = useTranslations(lang).team;
+
+const volunteerHref = getRelativeLocaleUrl(lang, 'volunteer');
+const contactHref   = getRelativeLocaleUrl(lang, '').replace(/\/$/, '') + '/#contactForm';
+
+const testimonials = tt.testimonials.map((t) => ({
+  name: t.name,
+  role: tt.testimonialRole,
+  quote: t.quote,
+}));
+---
+
+<BaseLayout
+  title={tt.pageTitle}
+  description={tt.metaDesc}
+  footerWaveBgColor="var(--color-cream)"
+>
+  <section class="section team-hero section--evergreen" aria-labelledby="team-heading">
+    <div class="container">
+      <p class="eyebrow team-hero__eyebrow">{tt.heroEyebrow}</p>
+      <h1 id="team-heading" class="display-lg team-hero__heading">
+        {tt.heroHeading.before}<span class="underline-mark">{tt.heroHeading.accent}</span>{tt.heroHeading.after}
+      </h1>
+      <p class="lede team-hero__lede">{tt.heroLede}</p>
+    </div>
+  </section>
+
+  <section class="section section--tight team-leaders" aria-labelledby="leaders-heading">
+    <div class="container">
+      <h2 id="leaders-heading" class="display team-leaders__heading">{tt.leadersHeading}</h2>
+      <ul class="team-leaders__grid" role="list">
+        {tt.leaders.map((leader) => (
+          <li class="team-leader reveal">
+            <figure class="photo-card team-leader__photo">
+              <Image
+                src={getImageUrl(`team/${leader.name.toLowerCase()}`, 800)}
+                widths={[320, 480, 800]}
+                sizes="(min-width: 1024px) 22rem, (min-width: 640px) 30vw, 70vw"
+                alt={`Portrait of ${leader.name}, ${leader.role} at Rosetta's Angels`}
+                width={400}
+                height={400}
+                loading="lazy"
+              />
+            </figure>
+            <div class="team-leader__body">
+              <h3 class="team-leader__name display-lg">{leader.name}</h3>
+              <p class="team-leader__role small-caps">{leader.role}</p>
+              <p class="team-leader__bio">{leader.bio}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--wheat team-testimonials" aria-labelledby="t-heading">
+    <div class="container">
+      <header class="team-testimonials__header">
+        <p class="eyebrow">{tt.testimonialsEyebrow}</p>
+        <h2 id="t-heading" class="display">
+          {tt.testimonialsHeading.before}<span class="underline-mark">{tt.testimonialsHeading.accent}</span>{tt.testimonialsHeading.after}
+        </h2>
+      </header>
+      <TestimonialsCarousel
+        client:visible
+        testimonials={testimonials}
+        labels={tt.carouselLabels}
+      />
+    </div>
+  </section>
+
+  <section class="section section--cream team-cta" aria-labelledby="cta-heading">
+    <div class="container team-cta__inner">
+      <h2 id="cta-heading" class="display team-cta__heading">{tt.ctaHeading}</h2>
+      <p class="team-cta__copy">{tt.ctaCopy}</p>
+      <div class="team-cta__buttons">
+        <a href={volunteerHref} class="btn btn--primary btn--lg">{tt.ctaVolunteer}</a>
+        <a href={contactHref} class="btn btn--secondary btn--lg">{tt.ctaContact}</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .team-hero { padding-block-end: var(--space-12); }
+  .team-hero__eyebrow { color: var(--color-amber); }
+  .team-hero__heading { color: var(--color-cream); margin-block: var(--space-4) var(--space-5); }
+  .team-hero__lede { color: var(--color-on-dark-soft); }
+
+  .team-leaders__heading {
+    color: var(--color-evergreen);
+    margin-block-end: var(--space-12);
+    text-align: center;
+  }
+  .team-leaders__grid {
+    list-style: none;
+    display: grid;
+    gap: var(--space-10);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 768px) { .team-leaders__grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .team-leader { display: flex; flex-direction: column; gap: var(--space-5); align-items: flex-start; }
+  .team-leader__photo {
+    aspect-ratio: 1 / 1;
+    width: min(20rem, 100%);
+    align-self: center;
+  }
+  .team-leader__photo:nth-of-type(odd) { transform: rotate(-1.5deg); }
+  .team-leader__photo:nth-of-type(even) { transform: rotate(1.5deg); }
+  .team-leader__photo img { aspect-ratio: 1/1; object-fit: cover; }
+  .team-leader__body { width: 100%; }
+  .team-leader__name { color: var(--color-evergreen); }
+  .team-leader__role { color: var(--color-amber-600); margin-block: var(--space-2) var(--space-3); display: block; }
+  .team-leader__bio { color: var(--color-ink-soft); line-height: var(--lh-relaxed); }
+
+  .team-testimonials__header { text-align: center; max-width: 42rem; margin: 0 auto; }
+  .team-testimonials__header h2 { color: var(--color-evergreen); margin-block-start: var(--space-3); }
+
+  .team-cta__inner { text-align: center; }
+  .team-cta__heading { color: var(--color-evergreen); }
+  .team-cta__copy { color: var(--color-ink-soft); margin-block: var(--space-4) var(--space-8); font-size: var(--fs-md); }
+  .team-cta__buttons { display: inline-flex; flex-wrap: wrap; gap: var(--space-4); justify-content: center; }
+</style>

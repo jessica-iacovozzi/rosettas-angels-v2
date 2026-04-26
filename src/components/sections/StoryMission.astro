@@ -2,6 +2,10 @@
 import { Image } from 'astro:assets';
 import { getImageUrl } from '~/lib/cloudinary';
 import { GALLERY_ASSETS_SORTED } from '~/lib/gallery-assets';
+import { getLang, useTranslations } from '~/i18n';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
 
 // Pick four distinct gallery photos; split 2 for story, 2 for mission.
 const photos = GALLERY_ASSETS_SORTED.filter((a) => a.type === 'image').slice(0, 4);
@@ -15,17 +19,11 @@ const missionPhotos = photos.slice(2, 4);
     <!-- Row 1: Our Story — text left, images right -->
     <div class="story-mission__row story-row">
       <article class="story-mission__block reveal">
-        <p class="eyebrow">Our Story</p>
+        <p class="eyebrow">{t.story.eyebrow}</p>
         <h2 id="story-heading" class="display story-mission__heading">
-          Born from <span class="underline-mark">love</span>.
+          {t.story.heading.before}<span class="underline-mark">{t.story.heading.accent}</span>{t.story.heading.after}
         </h2>
-        <p class="lede">
-          Rosetta's Angels was born from a profound loss. After Rosetta Malgieri
-          Regillo passed away, her family decided to honour her memory the way
-          she had always lived — by giving. What started with a handful of
-          baskets for neighbours has grown into an annual brigade serving
-          hundreds of Montreal families each holiday season.
-        </p>
+        <p class="lede">{t.story.body}</p>
       </article>
 
       <div class="story-mission__media reveal">
@@ -90,16 +88,11 @@ const missionPhotos = photos.slice(2, 4);
       </div>
 
       <article class="story-mission__block reveal">
-        <p class="eyebrow">Our Mission</p>
+        <p class="eyebrow">{t.mission.eyebrow}</p>
         <h2 class="display story-mission__heading">
-          Holiday joy, <span class="underline-mark">delivered</span>.
+          {t.mission.heading.before}<span class="underline-mark">{t.mission.heading.accent}</span>{t.mission.heading.after}
         </h2>
-        <p class="lede">
-          As a Montreal-based non-profit, we connect generous donors and
-          dedicated volunteers with families facing hardship — providing food,
-          gifts, and a personal moment of warmth at a time when it matters
-          most.
-        </p>
+        <p class="lede">{t.mission.body}</p>
       </article>
     </div>
 

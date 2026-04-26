@@ -1,0 +1,118 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '~/layouts/BaseLayout.astro';
+import Lightbox from '~/islands/Lightbox.tsx';
+import { getImageUrl } from '~/lib/cloudinary';
+import { GALLERY_ASSETS_SORTED } from '~/lib/gallery-assets';
+import { getLang, useTranslations } from '~/i18n';
+
+const lang = getLang(Astro.currentLocale);
+const tg = useTranslations(lang).gallery;
+
+const items = GALLERY_ASSETS_SORTED;
+---
+
+<BaseLayout title={tg.pageTitle} description={tg.metaDesc}>
+  <section class="section gallery-hero section--evergreen" aria-labelledby="gallery-heading">
+    <div class="container">
+      <p class="eyebrow gallery-hero__eyebrow">{tg.eyebrow}</p>
+      <h1 id="gallery-heading" class="display-lg gallery-hero__heading">
+        {tg.heading.before}<span class="underline-mark">{tg.heading.accent}</span>{tg.heading.after}
+      </h1>
+      <p class="lede gallery-hero__lede">{tg.lede}</p>
+    </div>
+  </section>
+
+  <section class="section section--tight gallery-grid-wrap">
+    <div class="container">
+      <ul class="gallery-grid" role="list">
+        {items.map((item, idx) => (
+          <li class="gallery-grid__item">
+            <button
+              type="button"
+              class="js-lightbox-trigger gallery-grid__btn"
+              data-lightbox-index={idx}
+              aria-label={`${item.type === 'video' ? tg.openVideo : tg.openPhoto}${item.alt}`}
+            >
+              <Image
+                src={getImageUrl(item.type === 'video' ? item.id.replace('_video', '') : item.id, 800)}
+                widths={[320, 480, 600, 800]}
+                sizes="(min-width: 1024px) 22vw, (min-width: 640px) 32vw, 46vw"
+                alt={item.alt}
+                loading={idx < 4 ? 'eager' : 'lazy'}
+                fetchpriority={idx === 0 ? 'high' : undefined}
+                width={600}
+                height={450}
+                onerror={`this.onerror=null;this.src='${item.thumbnailUrl ?? item.url}'`}
+              />
+              {item.type === 'video' && (
+                <span class="gallery-grid__play" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 20 20"><path d="M5 3 L17 10 L5 17 Z" fill="currentColor"/></svg>
+                </span>
+              )}
+              {item.year && <span class="gallery-grid__year" aria-hidden="true">{item.year}</span>}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <Lightbox client:load assets={items} />
+</BaseLayout>
+
+<style>
+  .gallery-hero { padding-block-end: var(--space-12); }
+  .gallery-hero__eyebrow { color: var(--color-amber); }
+  .gallery-hero__heading { color: var(--color-cream); margin-block: var(--space-4) var(--space-5); }
+  .gallery-hero__lede { color: var(--color-on-dark-soft); }
+
+  .gallery-grid {
+    list-style: none;
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(1, 1fr);
+  }
+  @media (min-width: 640px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-4); } }
+  @media (min-width: 1200px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .gallery-grid__item { aspect-ratio: 1 / 1; }
+  .gallery-grid__btn {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-wheat);
+    cursor: pointer;
+    transition: transform var(--duration-base) var(--ease-out),
+                box-shadow var(--duration-base) var(--ease-out);
+  }
+  .gallery-grid__btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .gallery-grid__btn img { width: 100%; height: 100%; object-fit: cover; }
+  .gallery-grid__play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 56px; height: 56px;
+    border-radius: var(--radius-pill);
+    background: var(--color-amber);
+    color: var(--color-evergreen-900);
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-md);
+  }
+  .gallery-grid__year {
+    position: absolute;
+    inset-block-end: var(--space-2);
+    inset-inline-start: var(--space-2);
+    background: var(--color-evergreen);
+    color: var(--color-amber);
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: var(--tracking-tight);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-xs);
+  }
+</style>

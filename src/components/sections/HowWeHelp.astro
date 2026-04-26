@@ -1,44 +1,33 @@
 ---
-const ACTIVITIES = [
-  {
-    title: 'Nourishment & Home Comfort',
-    description: 'Your generosity helps us provide families with fresh produce, nutritious staples, and essential items like refrigerators so they can safely store and prepare wholesome meals. Every food basket is assembled with care, helping families celebrate the season with warmth and dignity.',
-    icon: 'apple',
-  },
-  {
-    title: 'Everyday Essentials & Mobility',
-    description: 'Stability means more than food on the table. Through your contributions, families receive personal care products, household necessities, beds for restful sleep, and bus passes to stay connected to work, school, and vital appointments — supporting their independence all year long.',
-    icon: 'essentials',
-  },
-  {
-    title: 'Warmth & Holiday Joy',
-    description: 'Every family deserves to feel cared for during the holidays. Your donations make it possible to provide cozy winter clothing — coats, boots, hats, and gloves — to protect families through Montreal\'s cold months, alongside thoughtful, personalized gifts that bring joy and connection to every home.',
-    icon: 'gift',
-  },
-];
+import { getLang, useTranslations } from '~/i18n';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+const volunteerHref = getRelativeLocaleUrl(lang, 'volunteer');
 ---
 
 <section class="section how-we-help section--wheat" aria-labelledby="how-heading">
   <div class="container how-we-help__inner">
     <header class="how-we-help__header reveal">
-      <p class="eyebrow">How We Support Families</p>
+      <p class="eyebrow">{t.howWeHelp.eyebrow}</p>
       <h2 id="how-heading" class="display">
-        Three ways your <span class="underline-mark">generosity</span> reaches&nbsp;families.
+        {t.howWeHelp.heading.before}<span class="underline-mark">{t.howWeHelp.heading.accent}</span>{t.howWeHelp.heading.after}
       </h2>
     </header>
 
     <ul class="how-we-help__grid" role="list">
-      {ACTIVITIES.map((a) => (
+      {t.howWeHelp.cards.map((a, i) => (
         <li class="how-we-help__card reveal">
           <div class="how-we-help__icon" aria-hidden="true">
-            {a.icon === 'apple' && (
+            {i === 0 && (
 <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <path d="M16 8 C16 5 18 3 20 3"/>
   <path d="M16 7 C17 5 21 4 21 7 C21 9 17 9 16 7 Z"/>
   <path d="M16 9 C14 9 11 8 9 9 C6 10 4 13 4 17 C4 22 7 27 11 28 C13 29 14 28 16 28 C18 28 19 29 21 28 C25 27 28 22 28 17 C28 13 26 10 23 9 C21 8 18 9 16 9 Z"/>
 </svg>
             )}
-            {a.icon === 'essentials' && (
+            {i === 1 && (
               <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="5" y="11" width="22" height="16" rx="2"/>
                 <path d="M11 11V8a5 5 0 0110 0v3"/>
@@ -46,7 +35,7 @@ const ACTIVITIES = [
                 <circle cx="16" cy="19" r="2" fill="currentColor" stroke="none"/>
               </svg>
             )}
-            {a.icon === 'gift' && (
+            {i === 2 && (
 <svg viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <rect x="4" y="15" width="24" height="13" rx="2"/>
   <rect x="3" y="10" width="26" height="6" rx="2"/>
@@ -58,13 +47,13 @@ const ACTIVITIES = [
             )}
           </div>
           <h3 class="how-we-help__title">{a.title}</h3>
-          <p class="how-we-help__desc">{a.description}</p>
+          <p class="how-we-help__desc">{a.desc}</p>
         </li>
       ))}
     </ul>
 
     <div class="how-we-help__cta reveal">
-      <a href="/volunteer" class="btn btn--primary btn--lg">Become a Volunteer</a>
+      <a href={volunteerHref} class="btn btn--primary btn--lg">{t.howWeHelp.cta}</a>
     </div>
   </div>
 </section>

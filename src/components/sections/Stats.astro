@@ -1,8 +1,13 @@
 ---
+import { getLang, useTranslations } from '~/i18n';
+
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+
 const STATS = [
-  { value: 16, suffix: '', label: 'Years of Service' },
-  { value: 300, suffix: '+', label: 'Families Supported' },
-  { value: 50, suffix: '+', label: 'Annual Volunteers' },
+  { value: 16, suffix: '' },
+  { value: 300, suffix: '+' },
+  { value: 50, suffix: '+' },
 ];
 ---
 
@@ -13,9 +18,9 @@ const STATS = [
     </svg>
   </div>
   <div class="container stats__inner">
-    <h2 id="stats-heading" class="sr-only">Our impact by the numbers</h2>
+    <h2 id="stats-heading" class="sr-only">{t.stats.srLabel}</h2>
     <ul class="stats__grid" role="list">
-      {STATS.map((s) => (
+      {STATS.map((s, i) => (
         <li class="stats__item">
           <span
             class="stats__value display-xl"
@@ -24,12 +29,12 @@ const STATS = [
           >
             0{s.suffix}
           </span>
-          <span class="stats__label small-caps">{s.label}</span>
+          <span class="stats__label small-caps">{t.stats.labels[i]}</span>
         </li>
       ))}
     </ul>
     <p class="stats__since reveal">
-      <span class="underline-mark">Since 2009</span> in Montreal.
+      <span class="underline-mark">{t.stats.sinceUnderlined}</span>{t.stats.sinceRest}
     </p>
   </div>
   <!-- Wave divider: transitions from evergreen (stats bg) to cream (next section) -->
@@ -95,8 +100,9 @@ const STATS = [
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const items = document.querySelectorAll<HTMLElement>('.stats__value');
 
+  const fmtLocale = document.documentElement.lang === 'fr' ? 'fr-CA' : 'en-CA';
   function format(n: number, suffix: string) {
-    return `${Math.round(n).toLocaleString('en-US')}${suffix}`;
+    return `${Math.round(n).toLocaleString(fmtLocale)}${suffix}`;
   }
 
   function animateOne(el: HTMLElement) {

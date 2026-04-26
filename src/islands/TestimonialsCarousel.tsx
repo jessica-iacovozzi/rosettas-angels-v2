@@ -6,15 +6,27 @@ export interface Testimonial {
   quote: string;
 }
 
+interface CarouselLabels {
+  region?: string;
+  prev?: string;
+  next?: string;
+  choose?: string;
+}
+
 interface Props {
   testimonials: Testimonial[];
+  labels?: CarouselLabels;
 }
 
 /**
  * Testimonials carousel. Spec: prev/next arrows, dot indicators, keyboard
  * arrows, side-peek on desktop (prev & next visible faded), modulo wrap.
  */
-export default function TestimonialsCarousel({ testimonials }: Props) {
+export default function TestimonialsCarousel({ testimonials, labels = {} }: Props) {
+  const regionLabel = labels.region ?? 'Volunteer testimonials';
+  const prevLabel   = labels.prev   ?? 'Previous testimonial';
+  const nextLabel   = labels.next   ?? 'Next testimonial';
+  const chooseLabel = labels.choose ?? 'Choose a testimonial';
   const [active, setActive] = useState(0);
   const regionRef = useRef<HTMLDivElement>(null);
   const liveRef = useRef<HTMLDivElement>(null);
@@ -57,7 +69,7 @@ export default function TestimonialsCarousel({ testimonials }: Props) {
       ref={regionRef}
       role="region"
       aria-roledescription="carousel"
-      aria-label="Volunteer testimonials"
+      aria-label={regionLabel}
     >
       <div class="testimonials__viewport">
         {/* Side peek (desktop only) */}
@@ -90,14 +102,14 @@ export default function TestimonialsCarousel({ testimonials }: Props) {
         <button
           type="button"
           class="testimonials__arrow"
-          aria-label="Previous testimonial"
+          aria-label={prevLabel}
           onClick={() => go(-1)}
         >
           <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
             <polyline points="14 4 6 11 14 18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </button>
-        <ul class="testimonials__dots" role="tablist" aria-label="Choose a testimonial">
+        <ul class="testimonials__dots" role="tablist" aria-label={chooseLabel}>
           {testimonials.map((t, i) => (
             <li>
               <button
@@ -114,7 +126,7 @@ export default function TestimonialsCarousel({ testimonials }: Props) {
         <button
           type="button"
           class="testimonials__arrow"
-          aria-label="Next testimonial"
+          aria-label={nextLabel}
           onClick={() => go(1)}
         >
           <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">

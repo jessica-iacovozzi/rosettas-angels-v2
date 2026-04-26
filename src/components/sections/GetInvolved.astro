@@ -2,58 +2,55 @@
 import { Image } from 'astro:assets';
 import { getImageUrl } from '~/lib/cloudinary';
 import { GALLERY_ASSETS_SORTED } from '~/lib/gallery-assets';
+import { getLang, useTranslations } from '~/i18n';
+import { getRelativeLocaleUrl } from 'astro:i18n';
 
-const cards = [
-  {
-    eyebrow: 'Make a Donation',
-    title: 'Fund the next basket.',
-    body: 'Every dollar goes directly into food, gifts, and essentials for families this December.',
-    cta: { label: 'Donate Now', href: '/donate' },
-    image: GALLERY_ASSETS_SORTED.find((a) => a.id.includes('2018')) ?? GALLERY_ASSETS_SORTED[1],
-  },
-  {
-    eyebrow: 'Become a Volunteer',
-    title: 'Join the brigade.',
-    body: 'Sort, wrap, pack, deliver. A few hours of your time becomes a holiday memory for a family.',
-    cta: { label: 'Volunteer Now', href: '/volunteer' },
-    image: GALLERY_ASSETS_SORTED.find((a) => a.id.includes('2017')) ?? GALLERY_ASSETS_SORTED[2],
-  },
+const lang = getLang(Astro.currentLocale);
+const t = useTranslations(lang);
+
+const cardImages = [
+  GALLERY_ASSETS_SORTED.find((a) => a.id.includes('2018')) ?? GALLERY_ASSETS_SORTED[1],
+  GALLERY_ASSETS_SORTED.find((a) => a.id.includes('2017')) ?? GALLERY_ASSETS_SORTED[2],
 ];
 ---
 
 <section class="section get-involved" aria-labelledby="involve-heading">
   <div class="container">
     <header class="get-involved__header reveal">
-      <p class="eyebrow">Get Involved</p>
+      <p class="eyebrow">{t.getInvolved.eyebrow}</p>
       <h2 id="involve-heading" class="display">
-        Join us in making a <span class="underline-mark">difference</span>.
+        {t.getInvolved.heading.before}<span class="underline-mark">{t.getInvolved.heading.accent}</span>{t.getInvolved.heading.after}
       </h2>
     </header>
 
     <div class="get-involved__grid">
-      {cards.map((c) => (
-        <article class="get-involved__card reveal">
-          <div class="get-involved__media">
-            {c.image && (
-              <Image
-                src={getImageUrl(c.image.id, 1200)}
-                widths={[480, 800, 1200]}
-                sizes="(min-width: 1024px) 36rem, (min-width: 640px) 50vw, 92vw"
-                alt={c.image.alt}
-                loading="lazy"
-                width={800}
-                height={600}
-              />
-            )}
-          </div>
-          <div class="get-involved__body">
-            <p class="eyebrow">{c.eyebrow}</p>
-            <h3 class="get-involved__title display-lg">{c.title}</h3>
-            <p class="get-involved__copy">{c.body}</p>
-            <a href={c.cta.href} class="btn btn--primary btn--lg">{c.cta.label}</a>
-          </div>
-        </article>
-      ))}
+      {t.getInvolved.cards.map((c, i) => {
+        const img = cardImages[i];
+        const href = getRelativeLocaleUrl(lang, c.slug);
+        return (
+          <article class="get-involved__card reveal">
+            <div class="get-involved__media">
+              {img && (
+                <Image
+                  src={getImageUrl(img.id, 1200)}
+                  widths={[480, 800, 1200]}
+                  sizes="(min-width: 1024px) 36rem, (min-width: 640px) 50vw, 92vw"
+                  alt={img.alt}
+                  loading="lazy"
+                  width={800}
+                  height={600}
+                />
+              )}
+            </div>
+            <div class="get-involved__body">
+              <p class="eyebrow">{c.eyebrow}</p>
+              <h3 class="get-involved__title display-lg">{c.title}</h3>
+              <p class="get-involved__copy">{c.body}</p>
+              <a href={href} class="btn btn--primary btn--lg">{c.cta}</a>
+            </div>
+          </article>
+        );
+      })}
     </div>
   </div>
 </section>
