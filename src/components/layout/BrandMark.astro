@@ -60,6 +60,9 @@ import { getImageUrl } from '~/lib/cloudinary'
     color: var(--color-amber);
     margin-inline-start: 0.4em;
   }
+  @media (max-width: 1023px) {
+    .brandmark__text { display: none; }
+  }
   /* White logo on dark backgrounds (footer, is-on-dark header) */
   :global([data-theme='dark']) .brandmark { color: var(--color-cream); }
   :global([data-theme='dark']) .brandmark__logo--default { display: none; }

@@ -48,6 +48,9 @@ const embedUrl = `https://donorbox.org/embed/${campaign}`;
     border-top-color: var(--color-amber);
     animation: spin 0.9s linear infinite;
   }
+  @media (max-width: 767px) {
+    .donorbox { padding: 0; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .donorbox__spinner { animation: none; border-top-color: var(--color-amber); }
   }

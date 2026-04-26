@@ -67,8 +67,18 @@ const isActive = (href: string) =>
   .site-header.is-scrolled {
     background: var(--color-cream);
     border-bottom-color: var(--color-border);
+  }
+  /* backdrop-filter must live on a pseudo-element, not the header itself.
+     backdrop-filter on an element creates a new containing block for
+     position:fixed descendants, which breaks the mobile menu panel height. */
+  .site-header.is-scrolled::before {
+    content: '';
+    position: absolute;
+    inset: 0;
     backdrop-filter: saturate(140%) blur(6px);
     -webkit-backdrop-filter: saturate(140%) blur(6px);
+    z-index: -1;
+    pointer-events: none;
   }
   .site-header__inner {
     display: flex;

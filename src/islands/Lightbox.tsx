@@ -281,11 +281,13 @@ export default function Lightbox({ assets }: Props) {
           right: 0;
         }
         @media (max-width: 767px) {
+          .lightbox { padding: var(--space-2); }
           .lightbox__panel { grid-template-columns: 1fr; }
           .lightbox__btn--prev, .lightbox__btn--next {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
+            z-index: 1;
           }
           .lightbox__btn--prev { left: 8px; }
           .lightbox__btn--next { right: 8px; }
