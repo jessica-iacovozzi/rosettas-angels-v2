@@ -232,6 +232,7 @@ const isActive = (href: string) =>
     z-index: var(--z-overlay);
     animation: fade-in var(--duration-base) var(--ease-out);
   }
+  :global(.mobile-menu__panel:focus) { outline: none; }
   :global(.mobile-menu__panel) {
     position: fixed;
     inset-block: 0;

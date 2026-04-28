@@ -39,7 +39,7 @@ export default function MobileMenu({ items, currentPath, donateHref, donateLabel
     if (!open) return;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    firstLinkRef.current?.focus();
+    panelRef.current?.focus();
 
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') {
@@ -119,6 +119,7 @@ export default function MobileMenu({ items, currentPath, donateHref, donateLabel
         aria-modal="true"
         aria-label={siteNavLabel}
         data-theme="dark"
+        tabIndex={-1}
       >
         <nav aria-label={mobilePrimLabel}>
           <ul class="mobile-menu__list">

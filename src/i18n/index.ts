@@ -363,7 +363,7 @@ const en: Translations = {
       },
       {
         eyebrow: 'Become a Volunteer',
-        title: 'Join the brigade.',
+        title: "Join the next brigade.",
         body: 'Sort, wrap, pack, deliver. A few hours of your time becomes a holiday memory for a family.',
         cta: 'Volunteer Now',
         slug: 'volunteer',

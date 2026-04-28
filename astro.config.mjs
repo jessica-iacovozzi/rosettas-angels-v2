@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import preact from '@astrojs/preact';
 import vercel from '@astrojs/vercel';
 import sitemap from '@astrojs/sitemap';
+import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig({
   site: process.env.SITE_URL || 'https://www.rosettasangels.org',
@@ -38,5 +39,11 @@ export default defineConfig({
           "connect-src 'self' https://donorbox.org https://api.emailjs.com https://www.google.com https://script.google.com https://script.googleusercontent.com;",
       },
     },
+    plugins: [
+      visualizer({
+        open: false,
+        filename: "stats.html",
+      })
+    ]
   },
 });
