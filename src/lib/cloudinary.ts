@@ -81,7 +81,7 @@ export function getVideoThumbnail(
   // and a start-offset transformation.
   const url =
     `https://res.cloudinary.com/${CLOUD_NAME}/video/upload/` +
-    `so_${startOffsetSeconds},w_${width},c_scale,q_auto,f_jpg/` +
+    `so_${startOffsetSeconds},w_${width},c_scale,q_auto,f_auto/` +
     `${prefixed(publicId)}.jpg`;
   thumbCache.set(key, url);
   return url;

@@ -30,11 +30,12 @@ const missionPhotos = photos.slice(2, 4);
         {storyPhotos[0] && (
           <figure class="photo-card story-mission__photo story-mission__photo--a">
             <Image
-              src={getImageUrl(storyPhotos[0].id, 1080)}
-              widths={[480, 800, 1080]}
-              sizes="(min-width: 1024px) 26rem, (min-width: 640px) 45vw, 75vw"
+              src={getImageUrl(storyPhotos[0].id, 800)}
+              widths={[360, 560, 800]}
+              sizes="(min-width: 1024px) 26rem, (min-width: 640px) 44vw, 65vw"
               width={800}
               height={1000}
+              quality={72}
               loading="lazy"
               alt={storyPhotos[0].alt}
             />
@@ -44,10 +45,11 @@ const missionPhotos = photos.slice(2, 4);
           <figure class="photo-card story-mission__photo story-mission__photo--b">
             <Image
               src={getImageUrl(storyPhotos[1].id, 640)}
-              widths={[360, 640]}
-              sizes="(min-width: 1024px) 18rem, 38vw"
+              widths={[280, 400, 640]}
+              sizes="(min-width: 1024px) 18rem, (min-width: 640px) 35vw, 50vw"
               width={640}
               height={800}
+              quality={72}
               loading="lazy"
               alt={storyPhotos[1].alt}
             />
@@ -62,11 +64,12 @@ const missionPhotos = photos.slice(2, 4);
         {missionPhotos[0] && (
           <figure class="photo-card story-mission__photo story-mission__photo--a">
             <Image
-              src={getImageUrl(missionPhotos[0].id, 1080)}
-              widths={[480, 800, 1080]}
-              sizes="(min-width: 1024px) 26rem, (min-width: 640px) 45vw, 75vw"
+              src={getImageUrl(missionPhotos[0].id, 800)}
+              widths={[360, 560, 800]}
+              sizes="(min-width: 1024px) 26rem, (min-width: 640px) 44vw, 65vw"
               width={800}
               height={1000}
+              quality={72}
               loading="lazy"
               alt={missionPhotos[0].alt}
             />
@@ -76,10 +79,11 @@ const missionPhotos = photos.slice(2, 4);
           <figure class="photo-card story-mission__photo story-mission__photo--b">
             <Image
               src={getImageUrl(missionPhotos[1].id, 640)}
-              widths={[360, 640]}
-              sizes="(min-width: 1024px) 18rem, 38vw"
+              widths={[280, 400, 640]}
+              sizes="(min-width: 1024px) 18rem, (min-width: 640px) 35vw, 50vw"
               width={640}
               height={800}
+              quality={72}
               loading="lazy"
               alt={missionPhotos[1].alt}
             />
