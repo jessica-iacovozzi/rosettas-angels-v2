@@ -9,7 +9,8 @@ const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
 
 const bannerVideoUrl = getVideoUrl(HOME_BANNER_VIDEO_ID, 1920);
-const bannerPoster = getVideoThumbnail(HOME_BANNER_VIDEO_ID, 2, 1920);
+const bannerPosterMobile = getVideoThumbnail(HOME_BANNER_VIDEO_ID, 2, 828);
+const bannerPosterDesktop = getVideoThumbnail(HOME_BANNER_VIDEO_ID, 2, 1920);
 
 const featureVideoUrl = getVideoUrl(FEATURE_VIDEO_ID, 1280);
 const featurePoster = getVideoThumbnail(FEATURE_VIDEO_ID, 39, 720);
@@ -23,17 +24,17 @@ const volunteerHref = getRelativeLocaleUrl(lang, 'volunteer');
        The poster ensures something paints before video data arrives. -->
   <video
     class="hero__video"
-    autoplay
     muted
     loop
     playsinline
-    preload="metadata"
-    poster={bannerPoster}
+    preload="none"
+    poster={bannerPosterMobile}
     aria-hidden="true"
     tabindex="-1"
-  >
-    <source src={bannerVideoUrl} type="video/mp4" />
-  </video>
+    role="none"
+    data-src={bannerVideoUrl}
+    data-poster-desktop={bannerPosterDesktop}
+  ></video>
   <div class="hero__scrim" aria-hidden="true"></div>
 
   <div class="hero__inner container--wide">
@@ -54,7 +55,7 @@ const volunteerHref = getRelativeLocaleUrl(lang, 'volunteer');
 
     <aside class="hero__tile-wrap" aria-label={t.hero.videoAria}>
       <HeroVideoTile
-        client:idle
+        client:media="(min-width: 768px)"
         videoUrl={featureVideoUrl}
         posterUrl={featurePoster}
         label={t.hero.videoLabel}
@@ -236,11 +237,51 @@ const volunteerHref = getRelativeLocaleUrl(lang, 'volunteer');
 </style>
 
 <script>
-  // Slow-motion feeling without re-encoding the asset.
   const v = document.querySelector<HTMLVideoElement>('.hero__video');
-  if (v && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+  function loadBackgroundVideo() {
+    const tabletBreakpoint = getComputedStyle(document.documentElement)
+      .getPropertyValue('--bp-md').trim() || '768px';
+    if (!v || reducedMotion || !window.matchMedia(`(min-width: ${tabletBreakpoint})`).matches) {
+      return;
+    }
+    
+    const desktopPoster = v.dataset.posterDesktop;
+    const videoSrc = v.dataset.src;
+    
+    if (!desktopPoster || !videoSrc) {
+      console.warn('Missing video data attributes');
+      return;
+    }
+    
+    // Update poster first for immediate visual feedback
+    v.poster = desktopPoster;
+    
+    // Load video with proper error handling
+    v.src = videoSrc;
     v.playbackRate = 0.55;
-    // Some browsers reset rate on play(); reapply.
-    v.addEventListener('play', () => { v.playbackRate = 0.55; });
+    
+    const handlePlay = () => { v.playbackRate = 0.55; };
+    const handleError = (e: Event) => {
+      console.warn('Background video failed to load:', e);
+      // Keep desktop poster even if video fails
+    };
+    
+    v.addEventListener('play', handlePlay);
+    v.addEventListener('error', handleError);
+    
+    v.play().catch(() => {
+      // Autoplay failed - user interaction required, but video is decorative so we can ignore
+    });
+    
+    // Cleanup function to prevent memory leaks
+    return () => {
+      v.removeEventListener('play', handlePlay);
+      v.removeEventListener('error', handleError);
+    };
   }
+  
+  // Load video immediately if conditions are met
+  loadBackgroundVideo();
 </script>

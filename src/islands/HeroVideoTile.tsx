@@ -55,9 +55,16 @@ export default function HeroVideoTile({
       }
     }
     document.addEventListener('keydown', onKey);
+    
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = prevOverflow;
+      // Clean up video event listeners
+      const video = videoRef.current;
+      if (video) {
+        video.pause();
+        video.currentTime = 0;
+      }
     };
   }, [open]);
 
