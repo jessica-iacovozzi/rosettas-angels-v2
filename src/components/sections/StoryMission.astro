@@ -1,16 +1,19 @@
 ---
 import { Image } from 'astro:assets';
 import { getImageUrl } from '~/lib/cloudinary';
-import { GALLERY_ASSETS_SORTED } from '~/lib/gallery-assets';
 import { getLang, useTranslations } from '~/i18n';
 
 const lang = getLang(Astro.currentLocale);
 const t = useTranslations(lang);
 
-// Pick four distinct gallery photos; split 2 for story, 2 for mission.
-const photos = GALLERY_ASSETS_SORTED.filter((a) => a.type === 'image').slice(0, 4);
-const storyPhotos = photos.slice(0, 2);
-const missionPhotos = photos.slice(2, 4);
+const storyPhotos = [
+  { id: 'gallery/2009', alt: "Photograph from the 2009 Rosetta's Angels holiday basket event" },
+  { id: 'home/rosetta', alt: "Rosetta, founder in spirit of Rosetta's Angels" },
+];
+const missionPhotos = [
+  { id: 'home/group', alt: "Rosetta's Angels volunteers group photo" },
+  { id: 'banners/volunteer', alt: "Volunteer at a holiday basket event" },
+];
 ---
 
 <section class="section story-mission" aria-labelledby="story-heading">
