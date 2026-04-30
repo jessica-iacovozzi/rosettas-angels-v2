@@ -3,7 +3,8 @@ import type { VolunteerFormData, ApiResponse } from '~/types';
 import { isEmail, isPhone } from '~/lib/validation';
 import { executeRecaptcha } from '~/lib/recaptcha-client';
 import { sendEmail, TEMPLATES } from '~/lib/emailjs-client';
-import { useTranslations, t as fmt, type Lang } from '~/i18n';
+import { t as fmt } from '~/i18n';
+import type { Translations } from '~/i18n';
 
 const empty: VolunteerFormData = {
   name: '',
@@ -23,11 +24,10 @@ function isoToday(): string {
 }
 
 interface Props {
-  lang?: Lang;
+  strings: Translations['forms']['volunteer'];
 }
 
-export default function VolunteerForm({ lang = 'en' }: Props) {
-  const strings = useTranslations(lang).forms.volunteer;
+export default function VolunteerForm({ strings }: Props) {
 
   const [data, setData] = useState<VolunteerFormData>(empty);
   const [errors, setErrors] = useState<Errors>({});

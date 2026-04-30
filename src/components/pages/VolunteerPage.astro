@@ -120,7 +120,7 @@ const eventSchema = {
         )}
       </header>
       <div class="volunteer-form-wrap__card">
-        <VolunteerForm client:visible lang={lang} />
+        <VolunteerForm client:visible strings={useTranslations(lang).forms.volunteer} />
       </div>
     </div>
   </section>

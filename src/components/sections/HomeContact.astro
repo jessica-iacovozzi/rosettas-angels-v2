@@ -21,7 +21,7 @@ const t = useTranslations(lang);
     </header>
 
     <div class="home-contact__form reveal">
-      <ContactForm client:visible lang={lang} />
+      <ContactForm client:visible strings={t.forms.contact} />
     </div>
   </div>
 </section>

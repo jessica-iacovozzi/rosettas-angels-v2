@@ -3,7 +3,8 @@ import type { ContactFormData } from '~/types';
 import { isEmail, isPhone } from '~/lib/validation';
 import { executeRecaptcha } from '~/lib/recaptcha-client';
 import { sendEmail, TEMPLATES } from '~/lib/emailjs-client';
-import { useTranslations, t as fmt, type Lang } from '~/i18n';
+import { t as fmt } from '~/i18n';
+import type { Translations } from '~/i18n';
 
 const RATE_LIMIT_MS = 30_000;
 const STORAGE_KEY = 'lastEmailTime';
@@ -20,11 +21,10 @@ const empty: ContactFormData = {
 };
 
 interface Props {
-  lang?: Lang;
+  strings: Translations['forms']['contact'];
 }
 
-export default function ContactForm({ lang = 'en' }: Props) {
-  const strings = useTranslations(lang).forms.contact;
+export default function ContactForm({ strings }: Props) {
 
   const [data, setData] = useState<ContactFormData>(empty);
   const [errors, setErrors] = useState<Errors>({});
